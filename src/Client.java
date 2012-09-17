@@ -31,7 +31,9 @@ public class Client extends PApplet {
 	//Transcript Format: time, text-en, speakerId
 	String transcript = "" +
 	"0 \t Good day. \t 1 \n" +
-	"1000 \t Hi There! \t 2 \n";
+	"1000 \t Hi There! \t 2 \n" +
+	" \t How are you? \t 1 \n" +
+	" \t Not bad, thank you for asking. \t 2 \n";
 	
 	public void setup() {
 		swidth = 640;

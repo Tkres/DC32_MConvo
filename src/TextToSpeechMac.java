@@ -4,11 +4,11 @@ import java.io.IOException;
 public class TextToSpeechMac {
 		  // Store the voices, makes for nice auto-complete in Eclipse
 
-		  // nuance voices
-		  static final String TING_TING = "Ting-Ting";
-		  static final String SIN_JI = "Sin-Ji";
+		  // nuance voices - on OSX 10.8 ONLY.
+		  static final String TING_TING = "Ting-Ting"; //CHINESE
+		  static final String SIN_JI = "Sin-Ji"; //HK
+		  static final String LEE = "Lee"; //Australian
 		  
-		  static final String LEE = "Lee";
 		  // male voices
 		  static final String ALEX = "Alex";
 		  static final String BRUCE = "Bruce";
