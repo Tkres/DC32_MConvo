@@ -58,6 +58,9 @@ public class Server extends PApplet {
 	  if (addrPattern.equals("/myLocation")) {
 		  this.parseMessageMyLocation(theOscMessage);
 	  }
+	  if (addrPattern.equals("/humanDetection")) {
+		  this.parseMessageHumanDetection(theOscMessage);
+	  }
 	}
 	
 	// COMMUNICATIONS: PARSE MESSAGES
@@ -68,6 +71,10 @@ public class Server extends PApplet {
 		NetAddress newTargetLocation = new NetAddress(client_ip, client_port);
 		targetLocations.add(newTargetLocation);
 		System.out.println("Added Client." + newTargetLocation);
+	}
+	public void parseMessageHumanDetection(OscMessage theOscMessage) {
+		String humanDetected = theOscMessage.get(0).stringValue();
+		System.out.println(humanDetected);
 	}
 	
 }
