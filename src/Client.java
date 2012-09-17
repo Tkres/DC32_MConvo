@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import netP5.NetAddress;
 import oscP5.OscMessage;
 import oscP5.OscP5;
@@ -38,12 +40,13 @@ public class Client extends PApplet {
 		myTargetLocation = new NetAddress(target_ip, target_port);
 		this.sendMyLocationToTarget();
 		
+		TextToSpeechMac.say("Hello there!", "Alex", 250);
+		
 	}
 
 
 	public void draw() {
 		
-
 	}
 	
 	// -----------------------------------------------------------------------------
@@ -59,5 +62,6 @@ public class Client extends PApplet {
 		String addrPattern = theOscMessage.addrPattern();
 
 	}
+	
 	
 }
