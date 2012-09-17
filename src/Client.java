@@ -27,6 +27,12 @@ public class Client extends PApplet {
 	int home_port = 13000 + (int) random(1000);
 	String home_ip;
 	
+	// Load in a transcript
+	//Transcript Format: time, text-en, speakerId
+	String transcript = "" +
+	"0 \t Good day. \t 1 \n" +
+	"1000 \t Hi There! \t 2 \n";
+	
 	public void setup() {
 		swidth = 640;
 		sheight = 480;
@@ -40,13 +46,28 @@ public class Client extends PApplet {
 		myTargetLocation = new NetAddress(target_ip, target_port);
 		this.sendMyLocationToTarget();
 		
-		TextToSpeechMac.say("Hello there!", "Alex", 250);
+		//TextToSpeechMac.say("Hello there!", "Alex", 250);
 		
 	}
 
 
 	public void draw() {
-		
+		// divide transcript into lines
+			// divide lines into datum
+		String[] lines = transcript.split("\n");
+		for (int i=0; i<lines.length; i++) {
+			String[] datum = lines[i].split("\t");
+			
+			String text = datum[1];
+			int speakerId = Integer.parseInt(datum[2].trim());
+			
+			String speaker = "";
+			if (speakerId==1) speaker = TextToSpeechMac.ALEX;
+			if (speakerId==2) speaker = TextToSpeechMac.VICKI;
+			TextToSpeechMac.say(text, speaker, 200);
+			
+			delay(text.length()*100);
+		}
 	}
 	
 	// -----------------------------------------------------------------------------
