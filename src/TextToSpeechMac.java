@@ -53,12 +53,12 @@ public class TextToSpeechMac {
 			    say(script, ALEX, 200);
 			  }
 		
-		public static void say(String script, String voice, int speed) {
-		    try {
-		      Runtime.getRuntime().exec(new String[] {"say", "-v", voice, "[[rate " + speed + "]]" + script});
-		    }
-		    catch (IOException e) {
-		      System.err.println("IOException");
-		    }
+		  public static void say(String script, String voice, int speed) {
+			  try {
+				  Runtime.getRuntime().exec(new String[] {"say", "-v", voice, "[[rate " + speed + "]]" + script});
+			  }
+			  catch (IOException e) {
+				  System.err.println("IOException");
+			  }
 		  }
 }

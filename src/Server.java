@@ -71,11 +71,34 @@ public class Server extends PApplet {
 		NetAddress newTargetLocation = new NetAddress(client_ip, client_port);
 		targetLocations.add(newTargetLocation);
 		System.out.println("Added Client." + newTargetLocation);
+		sendTranscript();
 	}
 	// Parse msgs from face detection sentient
 	public void parseMessageHumanDetection(OscMessage theOscMessage) {
 		String humanDetected = theOscMessage.get(0).stringValue();
-		System.out.println(humanDetected);
+		System.out.println("HUMAN DETECTED.");
+		sendTranscript(humanDetected);
+	}
+	
+	public void sendTranscript() {
+		// for testing purposes, client that can accept transcript is first connected to targetLocations.
+		OscMessage myMessage = new OscMessage("/transcript");
+		//Transcript Format: time, text-en, speakerId
+		String transcript = "" +
+				"0 \t Good day. This has been sent from server godhead. How are you? \t 1 \n" +
+				" \t Hi There! What's up? \t 2 \n" +
+				" \t How are you? \t 1 \n" +
+				" \t Not bad, thank you for asking. \t 2 \n";
+		myMessage.add(transcript);
+		oscP5.send(myMessage, targetLocations.get(0));
+	}
+	public void sendTranscript(String s) {
+		// for testing purposes, client that can accept transcript is first connected to targetLocations.
+		OscMessage myMessage = new OscMessage("/transcript");
+		//Transcript Format: time, text-en, speakerId
+		String transcript = s;
+		myMessage.add(transcript);
+		oscP5.send(myMessage, targetLocations.get(0));
 	}
 	
 }

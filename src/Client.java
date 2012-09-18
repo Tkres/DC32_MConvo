@@ -54,7 +54,7 @@ public class Client extends PApplet {
 
 	public void draw() {
 		// divide transcript into lines
-			// divide lines into datum
+		// divide lines into datum ("\t" = horizontal tab; "\n" = new line)
 		String[] lines = transcript.split("\n");
 		for (int i=0; i<lines.length; i++) {
 			String[] datum = lines[i].split("\t");
@@ -65,6 +65,7 @@ public class Client extends PApplet {
 			String speaker = "";
 			if (speakerId==1) speaker = TextToSpeechMac.ALEX;
 			if (speakerId==2) speaker = TextToSpeechMac.VICKI;
+			if (speakerId==3) speaker = TextToSpeechMac.TRINOIDS;
 			TextToSpeechMac.say(text, speaker, 200);
 			
 			delay(text.length()*100);
@@ -80,8 +81,16 @@ public class Client extends PApplet {
 		oscP5.send(myMessage, myTargetLocation);
 	}
 	
+	/**
+	 * Communications. OSC listener that handles incoming messages.
+	 * @param theOscMessage incoming message to be parsed.
+	 */
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
+		if(addrPattern.equals("/transcript")) {
+			transcript = theOscMessage.get(0).stringValue(); 
+		}
+
 	}
 	
 	

@@ -7,7 +7,20 @@ import oscP5.OscMessage;
 import oscP5.OscP5;
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 
+/**
+ * Client that can detect faces via OpenCV. Displays it's computer vision in a applet window.
+ * NOTE, that the run configuration for this applet *MUST* have -d32 as a VM Argument to run as 32bit!
+ * Otherwise, there will be this error at runtime:
+ *     !!! required library not found : /Users/zlot/github/Eclipse Workspace/DC32_MConvo/libraries/OpenCV/libOpenCV.jnilib:  no suitable image found.  Did find:  /Users/zlot/github/Eclipse Workspace/DC32_MConvo/libraries/OpenCV/libOpenCV.jnilib: no matching architecture in universal wrapper
+ *     Verify that the java.library.path property is correctly set and the opencv.framework exists in '/Library/Frameworks' folder
+ *     Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: hypermedia.video.OpenCV.capture(III)V
+ * Also, in build path for OpenCV.jar, Native Library Location must be set to relative folder {{project name}}/libraries/OpenCV
+ * 
+ * @author zlot
+ *
+ */
 public class Client_OpenCV extends PApplet {
 	private static final long serialVersionUID = 1L;
 
@@ -76,7 +89,11 @@ public class Client_OpenCV extends PApplet {
 		opencv.contrast(opencv_contrast);
 		opencv.brightness(opencv_brightness);
 		// display the image
-		image( opencv.image(), 0, 0 );	
+		// if human detected, tint red, slowly fade tint out
+		PImage img = opencv.image();
+//		image(img, 0, 0);
+//		tint(100,100,100,100-(timeout/FRAME_RATE*6));
+		image(img, 0, 0);	
 		// draw face area(s)
 		pushStyle();
 		stroke(100,100,50);
@@ -91,7 +108,7 @@ public class Client_OpenCV extends PApplet {
 	public void checkForHuman(Rectangle[] faces) {
 		// check faces array, if not empty (more than 0), send panic msg to server
 		if(!humanIsPresent && faces.length != 0) {
-			sendHumanIsPresent("HUMAN PRESENT");
+			sendHumanIsPresent("0 \t How unfortunate. A human comes close. \t 3 \n");
 			humanIsPresent = true;
 		}
 		// if faces.length is empty for more than 6 seconds (arbitrary atm), then reset humanIsPresent alert.
@@ -147,8 +164,8 @@ public class Client_OpenCV extends PApplet {
 	
 	
 	/**
-	 * Communications. Handles incoming messages. Not currently used.
-	 * @param theOscMessage
+	 * Communications. OSC listener that handles incoming messages.
+	 * @param theOscMessage incoming message to be parsed.
 	 */
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
