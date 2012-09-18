@@ -49,7 +49,6 @@ public class Client extends PApplet {
 		this.sendMyLocationToTarget();
 		
 		//TextToSpeechMac.say("Hello there!", "Alex", 250);
-		
 	}
 
 
@@ -83,7 +82,6 @@ public class Client extends PApplet {
 	
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
-
 	}
 	
 	

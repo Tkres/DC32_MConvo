@@ -72,6 +72,7 @@ public class Server extends PApplet {
 		targetLocations.add(newTargetLocation);
 		System.out.println("Added Client." + newTargetLocation);
 	}
+	// Parse msgs from face detection sentient
 	public void parseMessageHumanDetection(OscMessage theOscMessage) {
 		String humanDetected = theOscMessage.get(0).stringValue();
 		System.out.println(humanDetected);
