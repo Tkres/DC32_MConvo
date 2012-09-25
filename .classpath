@@ -4,5 +4,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="libraries/core.jar"/>
 	<classpathentry kind="lib" path="libraries/oscP5.jar"/>
+	<classpathentry kind="lib" path="libraries/OpenCV/libOpenCV.jnilib"/>
+	<classpathentry kind="lib" path="libraries/OpenCV/libOpenCV.so"/>
+	<classpathentry kind="lib" path="libraries/OpenCV/OpenCV.dll"/>
+	<classpathentry kind="lib" path="libraries/OpenCV/OpenCV.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
