@@ -292,7 +292,7 @@ public class Client_OpenCV extends PApplet {
 	 * @param theOscMessage incoming message to be parsed.
 	 */
 	public void oscEvent(OscMessage theOscMessage) {
-		String addrPattern = theOscMessage.addrPattern();
+		//String addrPattern = theOscMessage.addrPattern();
 	}
 	
 
@@ -316,7 +316,7 @@ public class Client_OpenCV extends PApplet {
 	 * Helper method for drawing text to screen. Send in a mixed arraylist, it doesn't mind.
 	 * @param a ArrayList of mixed types to be printed to screen
 	 */
-	public void textToScreen(ArrayList a) {
+	public void textToScreen(ArrayList<Object> a) {
 		pushStyle();
 		fill(40,100,50);
 		int textYAxis = 20;

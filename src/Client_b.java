@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 import netP5.NetAddress;
 import oscP5.OscMessage;
 import oscP5.OscP5;

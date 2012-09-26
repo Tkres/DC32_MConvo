@@ -4,8 +4,6 @@ import netP5.NetAddress;
 import oscP5.OscMessage;
 import oscP5.OscP5;
 import processing.core.PApplet;
-import processing.core.PFont;
-import processing.core.PVector;
 
 public class Server extends PApplet {
 	private static final long serialVersionUID = 1L;
