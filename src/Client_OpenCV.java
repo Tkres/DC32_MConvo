@@ -46,16 +46,6 @@ public class Client_OpenCV extends PApplet {
 	String home_ip;
 	// OpenCV
 	OpenCV opencv;
-<<<<<<< HEAD
-	int opencv_contrast = 120;
-	int opencv_brightness = 54;
-	boolean humanIsPresent = false;
-
-	
-	public void setup() {
-		swidth = 320;
-		sheight = 240;
-=======
 	PImage img; // image captured from webcam
 	int opencv_contrast = 120;
 	int opencv_brightness = 54;
@@ -66,16 +56,11 @@ public class Client_OpenCV extends PApplet {
 	public void setup() {
 		swidth = 640;
 		sheight = 480;
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 		size(swidth, sheight);
 		colorMode(HSB, 100);
 		smooth();
 	    noFill();
 	    frameRate(FRAME_RATE);
-<<<<<<< HEAD
-
-=======
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	    // init communication
 	    oscP5 = new OscP5(this, home_port);
 	    home_ip = oscP5.ip();
@@ -87,11 +72,7 @@ public class Client_OpenCV extends PApplet {
 		opencv = new OpenCV(this);
 		opencv.capture(320, 240); // open video stream
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
-<<<<<<< HEAD
-
-=======
 	    
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	}
 
 	// -----------------------------------------------------------------------------
@@ -104,18 +85,14 @@ public class Client_OpenCV extends PApplet {
 	public void drawOpenCV() {
 		opencv.read();
 		opencv.convert(GRAY);
+		// pretty optimum settings, taken from my Dreams in the Witch House project
+        opencv.brightness(38);
+        opencv.contrast(41);
 		// detect faces
-		Rectangle[] faces = opencv.detect(1.2f, 2, OpenCV.HAAR_DO_CANNY_PRUNING, 40, 40);
-		opencv.contrast(opencv_contrast);
-		opencv.brightness(opencv_brightness);
+	//	Rectangle[] faces = opencv.detect(1.2f, 2, OpenCV.HAAR_DO_CANNY_PRUNING, 40, 40);
+		Rectangle[] faces = opencv.detect(1.2f, 2, OpenCV.HAAR_DO_ROUGH_SEARCH, 40, 40); // supposed to be faster, HAAR_FIND_BIGGEST_OBJECT is supposed to also be set. 
+
 		// display the image
-<<<<<<< HEAD
-		// if human detected, tint red, slowly fade tint out
-		PImage img = opencv.image();
-//		image(img, 0, 0);
-//		tint(100,100,100,100-(timeout/FRAME_RATE*6));
-		image(img, 0, 0);	
-=======
 		img = opencv.image();
 		// tile the screen once a human is present.
 		// opportunity here for the agitation curve. The screen tiles more, gets more annoyed 
@@ -127,9 +104,9 @@ public class Client_OpenCV extends PApplet {
 			drawTiledImages();
 		else
 			image(img,0,0, swidth, sheight);
+		
 		checkAgitation(faces);
 		
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 		// draw face area(s)
 		pushStyle();
 		stroke(100,100,50);
@@ -139,8 +116,6 @@ public class Client_OpenCV extends PApplet {
 		popStyle();
 		checkForHuman(faces);
 	}
-<<<<<<< HEAD
-=======
 	
 	ArrayList<Integer> facesAverage = new ArrayList<Integer>();
 	ArrayList<Integer> facesAverage2 = new ArrayList<Integer>();
@@ -175,16 +150,20 @@ public class Client_OpenCV extends PApplet {
 				// human has moved closer. React!
 				System.out.println("avg1: " + avg1 + ", avg2: " + avg2 + ", diff: " + (avg2-avg1));
 				agitation++;
-				tileScreen(5+agitation*2); // 5 is abritrary atm.
+				tileScreen(4+agitation*2); // *2 arbitrary.
 				facesAverage.clear(); facesAverage2.clear();
 			}
 		}
+		// if agitation is more than a certain threshold, go a bit crazy with dividing.
+		if(agitation > 3) { // 6 is arbitrary.
+			tileScreen(round(random(15)));
+		}
+		
 		// if human is no longer present, wipe facesAverage and facesAverage2 lists.
 		if(!humanIsPresent || frameCount % 60 == 0) {
 			facesAverage.clear(); facesAverage2.clear();
 		}
 	}
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 
 	int timeout = 0;
 	public void checkForHuman(Rectangle[] faces) {
@@ -193,21 +172,16 @@ public class Client_OpenCV extends PApplet {
 			sendHumanIsPresent("0 \t How unfortunate. A human comes close. \t 3 \n");
 			humanIsPresent = true;
 		}
-<<<<<<< HEAD
-		// if faces.length is empty for more than 6 seconds (arbitrary atm), then reset humanIsPresent alert.
-		if(faces.length == 0) {
-			timeout++;
-			textToScreen(timeout);
-			if(timeout > FRAME_RATE*6) {
-=======
 		// if faces.length is empty for more than 4 seconds (arbitrary atm), then reset humanIsPresent alert.
 		if(faces.length == 0) {
 			timeout++;
 			textToScreen(timeout, 20);
 			if(timeout > FRAME_RATE*4) {
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 				humanIsPresent = false;
 				timeout = 0;
+				//reset agitation
+				agitation = 1;
+				tileScreen(1);
 			}
 		} else { // face appeared again, reset the timeout
 			timeout = 0;
@@ -215,18 +189,6 @@ public class Client_OpenCV extends PApplet {
 	}
 	
 	
-<<<<<<< HEAD
-	public void stop() {
-	    opencv.stop();
-	    super.stop();
-	}
-	
-	
-	public void mouseDragged() {
-	    opencv_contrast   = (int) map(mouseX, 0, width, -128, 128);
-	    opencv_brightness = (int) map(mouseY, 0, width, -128, 128);
-	}
-=======
 	// -----------------------------------------------------------------------------
 	// SCREEN TILING.
 	/**
@@ -236,9 +198,11 @@ public class Client_OpenCV extends PApplet {
 	ArrayList<Integer> coordList = new ArrayList<Integer>();
 	
 	public void tileScreen() {
-		divide(0, 0, swidth, sheight, 5); // 5 is arbitrary.
+		coordList.clear();
+		divide(0, 0, swidth, sheight, 4); // 4 is arbitrary.
 	}
 	public void tileScreen(int depth) {
+		coordList.clear();
 		divide(0, 0, swidth, sheight, depth);
 	}
 	private void divide(int x1, int y1, int x2, int y2, int depth) {
@@ -289,11 +253,12 @@ public class Client_OpenCV extends PApplet {
 			int y1 = coordList.get(4*i+1);
 			int w = coordList.get(4*i+2);
 			int h = coordList.get(4*i+3);
+			// play with brightness/contrast
 			image(img,x1,y1,w,h);
+			filter(INVERT);
 		}
 	}
 
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	
 	
 	// -----------------------------------------------------------------------------
@@ -328,9 +293,6 @@ public class Client_OpenCV extends PApplet {
 	 */
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
-<<<<<<< HEAD
-
-=======
 	}
 	
 
@@ -346,7 +308,6 @@ public class Client_OpenCV extends PApplet {
 	    opencv_brightness = (int) map(mouseY, 0, width, -128, 128);
 	    textToScreen(opencv_contrast, 40);
 	    textToScreen(opencv_brightness, 60);
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	}
 	
 	// -----------------------------------------------------------------------------
@@ -380,16 +341,9 @@ public class Client_OpenCV extends PApplet {
 	 * Helper method for drawing text to screen.
 	 * @param o Object of type String, int, boolean or float.
 	 */
-<<<<<<< HEAD
-	public void textToScreen(Object o) {
-		pushStyle();
-		fill(40,100,50);
-		int textYAxis = 20;
-=======
 	public void textToScreen(Object o, int textYAxis) {
 		pushStyle();
 		fill(40,100,50);
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 			if (o instanceof String) {
 				text((String) o, 20, textYAxis);
 			}
