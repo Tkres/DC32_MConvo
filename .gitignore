@@ -1,6 +1,15 @@
 
-.DS_Store
-
 libraries/.DS_Store
+bin/*
+
+*.class
+*.applet
 
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db

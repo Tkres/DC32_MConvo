@@ -114,24 +114,22 @@ public class Client extends PApplet {
 		home_ip = oscP5.ip();
 		myTargetLocation = new NetAddress(target_ip, target_port);
 		this.sendMyLocationToTarget();
-		
-<<<<<<< HEAD
-=======
+
 		//TextToSpeechMac.say("Hello there!", "Alex", 250);
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
+
 	}
 	
 	String mySpeakerId = "US";
 
 
 	public void draw() {
-<<<<<<< HEAD
+
 		// divide badass transcript into cocaine lines
 			// divide lines into datum
-=======
+
 		// divide transcript into lines
 		// divide lines into datum ("\t" = horizontal tab; "\n" = new line)
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
+
 		String[] lines = transcript.split("\n");
 		for (int i=0; i<lines.length; i++) {
 			
@@ -173,7 +171,7 @@ public class Client extends PApplet {
 		myMessage.add(home_port);
 		oscP5.send(myMessage, myTargetLocation);
 	}
-<<<<<<< HEAD
+
 	int iPlayTranscript = 0;
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
@@ -181,17 +179,6 @@ public class Client extends PApplet {
 		//println(theOscMessage);
 		if (addrPattern.equals("/playTranscript")) {
 			iPlayTranscript = theOscMessage.get(0).intValue();
-=======
-	
-	/**
-	 * Communications. OSC listener that handles incoming messages.
-	 * @param theOscMessage incoming message to be parsed.
-	 */
-	public void oscEvent(OscMessage theOscMessage) {
-		String addrPattern = theOscMessage.addrPattern();
-		if(addrPattern.equals("/transcript")) {
-			transcript = theOscMessage.get(0).stringValue(); 
->>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 		}
 
 	}
