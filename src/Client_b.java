@@ -5,7 +5,7 @@ import oscP5.OscMessage;
 import oscP5.OscP5;
 import processing.core.PApplet;
 
-public class Client extends PApplet {
+public class Client_b extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String args[]) {
@@ -23,8 +23,7 @@ public class Client extends PApplet {
 	String target_ip0 = "127.0.0.1";
 	String target_ip1 = "192.168.0.194";
 	String target_ip2 = "172.19.19.109";
-	String target_ip3 = "172.24.28.206";
-	String target_ip = target_ip3;
+	String target_ip = target_ip0;
 	int home_port = 13000 + (int) random(1000);
 	String home_ip;
 	
@@ -117,7 +116,7 @@ public class Client extends PApplet {
 		
 	}
 	
-	String mySpeakerId = "US";
+	String mySpeakerId = "WB";
 
 
 	public void draw() {

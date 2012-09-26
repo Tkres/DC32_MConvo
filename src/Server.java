@@ -49,6 +49,27 @@ public class Server extends PApplet {
 		
 	}
 	
+	boolean playTranscript = false;
+	
+	public void mousePressed() {
+		playTranscript = !playTranscript;
+		System.out.println("playTranscript: "+playTranscript);
+		
+		for (NetAddress targetLocation : targetLocations) {
+		
+			OscMessage myMessage = new OscMessage("/playTranscript");
+			if (playTranscript) {
+				myMessage.add(1);
+			} else {
+				myMessage.add(0);
+			}
+			
+			oscP5.send(myMessage, targetLocation);
+		}
+		
+		
+	}
+	
 	
 	// -----------------------------------------------------------------------------
 	// COMMUNICATIONS.
