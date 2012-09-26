@@ -46,6 +46,7 @@ public class Client_OpenCV extends PApplet {
 	String home_ip;
 	// OpenCV
 	OpenCV opencv;
+<<<<<<< HEAD
 	int opencv_contrast = 120;
 	int opencv_brightness = 54;
 	boolean humanIsPresent = false;
@@ -54,12 +55,27 @@ public class Client_OpenCV extends PApplet {
 	public void setup() {
 		swidth = 320;
 		sheight = 240;
+=======
+	PImage img; // image captured from webcam
+	int opencv_contrast = 120;
+	int opencv_brightness = 54;
+	boolean humanIsPresent = false;
+	int agitation = 0; // agitation variable!
+	
+	
+	public void setup() {
+		swidth = 640;
+		sheight = 480;
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 		size(swidth, sheight);
 		colorMode(HSB, 100);
 		smooth();
 	    noFill();
 	    frameRate(FRAME_RATE);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	    // init communication
 	    oscP5 = new OscP5(this, home_port);
 	    home_ip = oscP5.ip();
@@ -71,7 +87,11 @@ public class Client_OpenCV extends PApplet {
 		opencv = new OpenCV(this);
 		opencv.capture(320, 240); // open video stream
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
+<<<<<<< HEAD
 
+=======
+	    
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	}
 
 	// -----------------------------------------------------------------------------
@@ -89,11 +109,27 @@ public class Client_OpenCV extends PApplet {
 		opencv.contrast(opencv_contrast);
 		opencv.brightness(opencv_brightness);
 		// display the image
+<<<<<<< HEAD
 		// if human detected, tint red, slowly fade tint out
 		PImage img = opencv.image();
 //		image(img, 0, 0);
 //		tint(100,100,100,100-(timeout/FRAME_RATE*6));
 		image(img, 0, 0);	
+=======
+		img = opencv.image();
+		// tile the screen once a human is present.
+		// opportunity here for the agitation curve. The screen tiles more, gets more annoyed 
+		// the close you get or the longer you stay.
+		if(!humanIsPresent && faces.length != 0) {
+			tileScreen();
+		}
+		if(humanIsPresent)
+			drawTiledImages();
+		else
+			image(img,0,0, swidth, sheight);
+		checkAgitation(faces);
+		
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 		// draw face area(s)
 		pushStyle();
 		stroke(100,100,50);
@@ -103,6 +139,52 @@ public class Client_OpenCV extends PApplet {
 		popStyle();
 		checkForHuman(faces);
 	}
+<<<<<<< HEAD
+=======
+	
+	ArrayList<Integer> facesAverage = new ArrayList<Integer>();
+	ArrayList<Integer> facesAverage2 = new ArrayList<Integer>();
+	
+	private void checkAgitation(Rectangle[] faces) {
+		// have to: take the area size of face rectangle per frame, 
+		// average it out to compensate for face detection discrepancies (grab chunks of maybe 30frames?)
+		// compare to the same average 2 seconds into the future
+		// if gotten bigger, human is closer, computer is more annoyed!
+		if(faces.length != 0) {
+			if(facesAverage.size() < 15) {
+				int avg = faces[0].width * faces[0].height;
+				facesAverage.add(avg);				
+			} else {
+				if(facesAverage2.size() < 15) {
+					int avg = faces[0].width * faces[0].height;
+					facesAverage2.add(avg);				
+				}
+			}
+		}
+		// once facesAverage2.size() hits 15, compare. if bigger, flag agitation to ++!
+		if(humanIsPresent && facesAverage.size() == 15 && facesAverage2.size() == 15) {
+			int avg1 = 0, avg2 = 0;
+			for(Integer i : facesAverage) {
+				avg1 += i;
+			}
+			for(Integer i : facesAverage2) {
+				avg2 += i;
+			}
+			System.out.println("avg1: " + avg1 + ", avg2: " + avg2);
+			if(avg1/facesAverage.size() <= avg2/facesAverage2.size()) {
+				// human has moved closer. React!
+				System.out.println("avg1: " + avg1 + ", avg2: " + avg2 + ", diff: " + (avg2-avg1));
+				agitation++;
+				tileScreen(5+agitation*2); // 5 is abritrary atm.
+				facesAverage.clear(); facesAverage2.clear();
+			}
+		}
+		// if human is no longer present, wipe facesAverage and facesAverage2 lists.
+		if(!humanIsPresent || frameCount % 60 == 0) {
+			facesAverage.clear(); facesAverage2.clear();
+		}
+	}
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 
 	int timeout = 0;
 	public void checkForHuman(Rectangle[] faces) {
@@ -111,11 +193,19 @@ public class Client_OpenCV extends PApplet {
 			sendHumanIsPresent("0 \t How unfortunate. A human comes close. \t 3 \n");
 			humanIsPresent = true;
 		}
+<<<<<<< HEAD
 		// if faces.length is empty for more than 6 seconds (arbitrary atm), then reset humanIsPresent alert.
 		if(faces.length == 0) {
 			timeout++;
 			textToScreen(timeout);
 			if(timeout > FRAME_RATE*6) {
+=======
+		// if faces.length is empty for more than 4 seconds (arbitrary atm), then reset humanIsPresent alert.
+		if(faces.length == 0) {
+			timeout++;
+			textToScreen(timeout, 20);
+			if(timeout > FRAME_RATE*4) {
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 				humanIsPresent = false;
 				timeout = 0;
 			}
@@ -125,6 +215,7 @@ public class Client_OpenCV extends PApplet {
 	}
 	
 	
+<<<<<<< HEAD
 	public void stop() {
 	    opencv.stop();
 	    super.stop();
@@ -135,6 +226,74 @@ public class Client_OpenCV extends PApplet {
 	    opencv_contrast   = (int) map(mouseX, 0, width, -128, 128);
 	    opencv_brightness = (int) map(mouseY, 0, width, -128, 128);
 	}
+=======
+	// -----------------------------------------------------------------------------
+	// SCREEN TILING.
+	/**
+	 * following recursive tile code code modified, original by Benedikt Gro§ & Julia Laub<br>
+	 * benedikt Št looksgood dot de / julia Št generative-systeme dot de<br>
+	 */
+	ArrayList<Integer> coordList = new ArrayList<Integer>();
+	
+	public void tileScreen() {
+		divide(0, 0, swidth, sheight, 5); // 5 is arbitrary.
+	}
+	public void tileScreen(int depth) {
+		divide(0, 0, swidth, sheight, depth);
+	}
+	private void divide(int x1, int y1, int x2, int y2, int depth) {
+	  // BASE CASE.
+	  if (depth<1)
+	    return;
+
+	  float horOrVert = random(1); // decide to tile vertical or horicontal
+	  int count = round(random(1,2));//each tile divide in n parts
+	  depth -= 1;//increment
+
+	  //tiling vertical or horicontal
+	  if (horOrVert <= .5f) {
+	    int x_width = abs(x2-x1)/count;
+	    if (x_width < 1.8) count = 1;
+	    for (int i=0; i<count; i++) {
+	      x_width = abs(x2-x1)/count;
+	      int xA = x1+x_width*i;
+	      int xB = x1+x_width*(i+1);
+	      divide(xA, y1, xB, y2, depth);
+	    }
+	  } else {
+	    int y_height = abs(y2-y1)/count;
+	    if (y_height < 0.4) count = 1;
+	    for (int i=0; i<count; i++) {
+	      y_height = abs(y2-y1)/count;
+	      int yA = y1+y_height*i;
+	      int yB = y1+y_height*(i+1);
+	      divide(x1, yA, x2, yB, depth);
+	    }
+	  }
+	  // reached max recursion depth.
+	  if (depth<1) {
+		// place all these inputs into an array for future placement,
+		// so as not have to run the recursive algorithm every frame.
+		coordList.add(x1);
+		coordList.add(y1);
+		coordList.add(x2-x1);
+		coordList.add(y2-y1);
+	  }
+	}
+
+	public void drawTiledImages() {
+		// coordList.size() divided by 4 as that's how many images there will be!
+		// steps through the arrayList in sets of 4. See the adding of coordLists in divide().
+		for(int i=0; i<coordList.size()/4; i++) { 
+			int x1 = coordList.get(4*i);
+			int y1 = coordList.get(4*i+1);
+			int w = coordList.get(4*i+2);
+			int h = coordList.get(4*i+3);
+			image(img,x1,y1,w,h);
+		}
+	}
+
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	
 	
 	// -----------------------------------------------------------------------------
@@ -169,7 +328,25 @@ public class Client_OpenCV extends PApplet {
 	 */
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
+<<<<<<< HEAD
 
+=======
+	}
+	
+
+	public void stop() {
+	    opencv.stop();
+	    super.stop();
+	}
+	
+	// -----------------------------------------------------------------------------
+	// INTERACTION
+	public void mouseDragged() {
+	    opencv_contrast   = (int) map(mouseX, 0, width, -128, 128);
+	    opencv_brightness = (int) map(mouseY, 0, width, -128, 128);
+	    textToScreen(opencv_contrast, 40);
+	    textToScreen(opencv_brightness, 60);
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 	}
 	
 	// -----------------------------------------------------------------------------
@@ -203,10 +380,16 @@ public class Client_OpenCV extends PApplet {
 	 * Helper method for drawing text to screen.
 	 * @param o Object of type String, int, boolean or float.
 	 */
+<<<<<<< HEAD
 	public void textToScreen(Object o) {
 		pushStyle();
 		fill(40,100,50);
 		int textYAxis = 20;
+=======
+	public void textToScreen(Object o, int textYAxis) {
+		pushStyle();
+		fill(40,100,50);
+>>>>>>> 1c5c099f839a124a7cf57636ba7a91725d96fced
 			if (o instanceof String) {
 				text((String) o, 20, textYAxis);
 			}
