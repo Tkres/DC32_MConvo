@@ -162,7 +162,7 @@ public class Client_b extends PApplet {
 		myMessage.add(home_port);
 		oscP5.send(myMessage, myTargetLocation);
 	}
-	int iPlayTranscript = 0;
+	int iPlayTranscript = 1;
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
 		//println(addrPattern);

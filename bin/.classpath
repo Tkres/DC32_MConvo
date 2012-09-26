@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path=""/>
-	<classpathentry kind="lib" path="/Users/zlot/github/Eclipse Workspace/DC32_MConvo/libraries/Processing/core.jar"/>
-	<classpathentry kind="lib" path="/Users/zlot/github/Eclipse Workspace/DC32_MConvo/libraries/oscP5.jar"/>
-	<classpathentry kind="lib" path="/Users/zlot/github/Eclipse Workspace/DC32_MConvo/libraries/OpenCV/OpenCV.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
