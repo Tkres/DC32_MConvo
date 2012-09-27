@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="libraries/OpenCV/OpenCV.jar"/>
-	<classpathentry kind="lib" path="libraries/Processing/core.jar"/>
+	<classpathentry kind="lib" path="libraries/Processing/core.jar" sourcepath="libraries/Processing/src/src.zip"/>
 	<classpathentry kind="lib" path="libraries/oscP5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
