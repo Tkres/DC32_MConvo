@@ -17,7 +17,8 @@ public class Server extends PApplet {
 	int home_port = 12000;
 	String home_ip;
 	int target_port = 13001;
-	String target_ip = "127.0.0.1";
+	String localhost = "127.0.0.1";
+	String target_ip = localhost;
 	ArrayList<NetAddress> targetLocations;
 	
 
