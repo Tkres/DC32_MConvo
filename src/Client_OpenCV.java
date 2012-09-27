@@ -29,7 +29,7 @@ public class Client_OpenCV extends PApplet {
 	}
 
 	// Core Variables
-	int swidth, sheight;
+	int swidth, sheight, cwidth, cheight;
 	final int FRAME_RATE = 30;
 	int rootFrame = 0;
 	PFont font;
@@ -56,6 +56,7 @@ public class Client_OpenCV extends PApplet {
 	public void setup() {
 		swidth = 640;
 		sheight = 480;
+		cwidth = 320; cheight = 240; //capture width, height
 		size(swidth, sheight);
 		colorMode(HSB, 100);
 		smooth();
@@ -70,7 +71,7 @@ public class Client_OpenCV extends PApplet {
 	    font = new PFont(); font = loadFont("../resources/AndaleMono-12.vlw"); textFont(font, fontSize);	    
 		// init openCV
 		opencv = new OpenCV(this);
-		opencv.capture(320, 240); // open video stream
+		opencv.capture(cwidth, cheight); // open video stream
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
 	    
 	}
@@ -101,19 +102,11 @@ public class Client_OpenCV extends PApplet {
 			tileScreen();
 		}
 		if(humanIsPresent)
-			drawTiledImages();
+			drawTiledImages(faces);
 		else
 			image(img,0,0, swidth, sheight);
 		
 		checkAgitation(faces);
-		
-		// draw face area(s)
-		pushStyle();
-		stroke(100,100,50);
-		for(int i=0; i<faces.length; i++) {
-			rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height); 
-		}
-		popStyle();
 		checkForHuman(faces);
 	}
 	
@@ -245,7 +238,7 @@ public class Client_OpenCV extends PApplet {
 	  }
 	}
 
-	public void drawTiledImages() {
+	public void drawTiledImages(Rectangle[] faces) {
 		// coordList.size() divided by 4 as that's how many images there will be!
 		// steps through the arrayList in sets of 4. See the adding of coordLists in divide().
 		for(int i=0; i<coordList.size()/4; i++) { 
@@ -253,8 +246,19 @@ public class Client_OpenCV extends PApplet {
 			int y1 = coordList.get(4*i+1);
 			int w = coordList.get(4*i+2);
 			int h = coordList.get(4*i+3);
-			// play with brightness/contrast
 			image(img,x1,y1,w,h);
+			// draw face detection rect
+			for(int j=0; j<faces.length; j++) {
+				float facex = map(faces[j].x,0,cwidth,x1,x1+w);
+				float facey = map(faces[j].y,0,cheight,y1,y1+h);
+				float facew = map(faces[j].width,0,cwidth,0,w);
+				float faceh = map(faces[j].height,0,cheight,0,h);
+				pushStyle();
+				stroke(100,100,50);
+				rect(facex,facey,facew,faceh);
+				popStyle();
+			}
+			//draw 	
 			filter(INVERT);
 		}
 	}
