@@ -98,7 +98,21 @@ public class Client extends PApplet {
 	"US	What else? \n" +
 	"WB	Very often I do what I really don’t want to do, only because I am tortured by envy – someone else can do this, instead of me. As a matter of fact, I always buy things and people, only because I am jealous – if someone else will buy them, and they will be good in the end.";
 	
-	String transcript = transcript3;
+	String transcript4 =  ""+
+			"US	Oh what would people do without technology, \n" +
+			"WB	Perhaps we would just twiddle our thumbs,    \n" +
+			"US	What I would do is play the drums,  \n" +
+			"WB	In classes there would not be computers like biology,  \n" +
+			"US	Bill Gates is the man we should be thanking, \n" +
+			"WB	He gave us the gift of Microsoft for computers, \n" +
+			"US	Someone invented the bus for commuters,    \n" +
+			"WB	Now someone wanted somewhere to put their money so then there was banking,    \n" +
+			"US	In the class of Dr. Gen, \n" +
+			"WB	Everything is on computers and all we need is fingers to type,   \n" +
+			"US	So there is no reason to gripe,   \n" +
+			"WB	Everyone hail technology and say amen";
+	
+	String transcript = transcript4;
 	
 	public void setup() {
 		swidth = 640;
