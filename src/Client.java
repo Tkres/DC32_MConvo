@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 import netP5.NetAddress;
 import oscP5.OscMessage;
 import oscP5.OscP5;
@@ -156,10 +158,29 @@ public class Client extends PApplet {
 			if (speaker.equals("US")) chosenSpeaker = TextToSpeechMac.KATHY;
 			
 			if (speaker.equals(mySpeakerId)) {
+				
+				try {
+					  Runtime.getRuntime().exec(new String[] {"drutil", "tray", "open"});
+				  }
+				  catch (IOException e) {
+					  System.err.println("IOException");
+				  }
+				
 				TextToSpeechMac.say(text, chosenSpeaker, 200);
+				
+				
+				
 			}
 			//delay(text.split(" ").length*6*60);
+			
 			delay(text.length()*80);
+			
+			try {
+				  Runtime.getRuntime().exec(new String[] {"drutil", "tray", "close"});
+			  }
+			  catch (IOException e) {
+				  System.err.println("IOException");
+			  }
 			
 			/*
 			String text = datum[1];
