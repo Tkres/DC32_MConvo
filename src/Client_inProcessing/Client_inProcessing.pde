@@ -3,13 +3,6 @@ import oscP5.OscMessage;
 import oscP5.OscP5;
 import processing.core.PApplet;
 
-public class Client extends PApplet {
-	private static final long serialVersionUID = 1L;
-
-	public static void main(String args[]) {
-		PApplet.main(new String[] { "--present", "PSketch" });
-	}
-
 	// Core Variables
 	int swidth, sheight;
 	int rootFrame = 0;
@@ -40,7 +33,7 @@ public class Client extends PApplet {
 	"US	Say me more about yourself.    \n" + 
 	"WB	I am always sure, I can look into mirror and see nothing. Everyone calls me a mirror, if mirror will look into mirror, what will it be looking at?\n" + 
 	"US	So, you are not existing?    \n" + 
-	"WB	I am the same Nothing as you – if you’ll look at this honestly.  \n" + 
+	"WB	I am the same Nothing as you ‚Äì if you‚Äôll look at this honestly.  \n" + 
 	"US	I can see myself in the mirror,  opposing to you.  \n" + 
 	"WB	What is the date of your birthday?   \n" + 
 	"US	Do you want to come?    \n" + 
@@ -50,7 +43,7 @@ public class Client extends PApplet {
 	"US	Knock Knock :)  \n"+
 	"WB	You know, I have to go pee. Here, we are peeing at our paintings to make real pop-art.    \n"+
 	"US	Well, go.  \n"+
-	"WB	Say, when you are making sex, do you think	“Is it really me? Am I really doing this? This is really strange. I was not doing this five minutes ago. I will not do this after some time. What could my mother say? Who could invent this thing?”   \n"+
+	"WB	Say, when you are making sex, do you think	‚ÄúIs it really me? Am I really doing this? This is really strange. I was not doing this five minutes ago. I will not do this after some time. What could my mother say? Who could invent this thing?‚Äù   \n"+
 	"US	Sometimes, this is because of excessive stress. Our problems are controlling us.  \n"+
 	"WB	What do you want?   \n"+
 	"US	Self-determination, as everyone. Maybe I am just bored.   \n"+
@@ -58,7 +51,7 @@ public class Client extends PApplet {
 	"US	No more than everything else around us.  \n"+
 	"WB	This is just an idle talk   \n"+
 	"US	And what is not an idle talk then?    \n"+
-	"WB	Love in fantasies is much better than in reality. Never do this – excites too much.   \n"+
+	"WB	Love in fantasies is much better than in reality. Never do this ‚Äì excites too much.   \n"+
 	"US	I am thinking exactly about this for the whole morning.    \n"+
 	"WB	What artists do you like?    \n"+
 	"US	Mainly from 20th century. Quite a few.\n"+
@@ -66,29 +59,29 @@ public class Client extends PApplet {
 	"US	Yes. And you?    \n"+
 	"WB	Do not evade a question!\n"+
 	"US	I am not!    \n"+
-	"WB	I think, I am lacking some elements in my organism, that is why I have an inclination to be a…. mummy’s boy. Well… “a girl”. No, mummy’s boy. “Eternal boy”.    \n"+
+	"WB	I think, I am lacking some elements in my organism, that is why I have an inclination to be a‚Ä¶. mummy‚Äôs boy. Well‚Ä¶ ‚Äúa girl‚Äù. No, mummy‚Äôs boy. ‚ÄúEternal boy‚Äù.    \n"+
 	"US	More likely, this is because you have more than enough :)    \n"+
 	"WB	Pop-art is money, embodied. Art, created by superstars. Do you want to be a SUPERSTAR?\n"+
 	"US	no\n"+
 	"WB	You are hiding something from me, right?  \n"+
 	"US	How did you know?    \n"+
-	"WB	Sad languor, emaciated paleness… Chick bastardness, deep passive astonishment, charming secret knowledge… Chintzy joy, explosive tropisms, chalky mask of  an evil elf, slightly slavonic look…";
+	"WB	Sad languor, emaciated paleness‚Ä¶ Chick bastardness, deep passive astonishment, charming secret knowledge‚Ä¶ Chintzy joy, explosive tropisms, chalky mask of  an evil elf, slightly slavonic look‚Ä¶";
 	
 	String transcript3 = ""+
 	"US	Boring\n" +
-	"WB	Listen, I am already overfilled with problems of my acquaintances. Maybe you’d better go to a restaurant? Or a supermarket, at least?    \n" +
-	"US	Maybe I’ll do this, but not now.  \n" +
+	"WB	Listen, I am already overfilled with problems of my acquaintances. Maybe you‚Äôd better go to a restaurant? Or a supermarket, at least?    \n" +
+	"US	Maybe I‚Äôll do this, but not now.  \n" +
 	"WB	I always turn every problem to its chemical base, because I really think, it is the beginning and the end.  \n" +
-	"US	True. But I can’t do this every time. \n" +
+	"US	True. But I can‚Äôt do this every time. \n" +
 	"WB	I am the same Nothing as you, if you look closely.\n" +
 	"US	Everyone is nothing per se.    \n" +
-	"WB	Death	I don’t believe in it, because when it comes, man is not there already. I can’t tell anything about it, because I am not ready for it.    \n" +
-	"US	And I didn’t ask you ;) \n" +
+	"WB	Death	I don‚Äôt believe in it, because when it comes, man is not there already. I can‚Äôt tell anything about it, because I am not ready for it.    \n" +
+	"US	And I didn‚Äôt ask you ;) \n" +
 	"WB	I always turn every problem to its chemical base, because I really think, it is the beginning and the end.   \n" +
 	"US	Seems like someone is stuck. Heh :)   \n" +
-	"WB	Until time, when someone was shooting at me, I always thought, I am only half-present here – I always suspected, I am watching a TV instead of living a life.     \n" +
+	"WB	Until time, when someone was shooting at me, I always thought, I am only half-present here ‚Äì I always suspected, I am watching a TV instead of living a life.     \n" +
 	"US	I watch TV. At least sometimes.  \n" +
-	"WB	Yes, you can’t go against your nature…    \n" +
+	"WB	Yes, you can‚Äôt go against your nature‚Ä¶    \n" +
 	"US	One can try.   \n" +
 	"WB	Though I also can be mistaken.  \n" +
 	"US	Anyone can make mistakes.  Quite enough.  \n" +
@@ -96,7 +89,7 @@ public class Client extends PApplet {
 	"US	Same as everyone.   \n" +
 	"WB	I understand nothing, except GREEN BANKNOTES. Not stock, not bearer-cheques, not traveling-cheques.  And especially not terrorism.   \n" +
 	"US	What else? \n" +
-	"WB	Very often I do what I really don’t want to do, only because I am tortured by envy – someone else can do this, instead of me. As a matter of fact, I always buy things and people, only because I am jealous – if someone else will buy them, and they will be good in the end.";
+	"WB	Very often I do what I really don‚Äôt want to do, only because I am tortured by envy ‚Äì someone else can do this, instead of me. As a matter of fact, I always buy things and people, only because I am jealous ‚Äì if someone else will buy them, and they will be good in the end.";
 	
 	String transcript = transcript3;
 	
@@ -118,6 +111,8 @@ public class Client extends PApplet {
 	}
 	
 	String mySpeakerId = "US";
+
+        TextToSpeechMac Speech = new TextToSpeechMac();
 
 
 	public void draw() {
@@ -142,7 +137,7 @@ public class Client extends PApplet {
 			if (speaker.equals("US")) chosenSpeaker = TextToSpeechMac.KATHY;
 			
 			if (speaker.equals(mySpeakerId)) {
-				TextToSpeechMac.say(text, chosenSpeaker, 200);
+				Speech.say(text, chosenSpeaker, 200);
 			}
 			//delay(text.split(" ").length*6*60);
 			delay(text.length()*80);
@@ -180,6 +175,69 @@ public class Client extends PApplet {
 		}
 
 	}
-	
-	
+
+
+public class TextToSpeechMac {
+      // Store the voices, makes for nice auto-complete in Eclipse
+
+      // nuance voices - on OSX 10.8 ONLY.
+      static final String TING_TING = "Ting-Ting"; //CHINESE
+      static final String SIN_JI = "Sin-Ji"; //HK
+      static final String LEE = "Lee"; //Australian
+      
+      // male voices
+      static final String ALEX = "Alex";
+      static final String BRUCE = "Bruce";
+      static final String FRED = "Fred";
+      static final String JUNIOR = "Junior";
+      static final String RALPH = "Ralph";
+
+      // female voices
+      static final String AGNES = "Agnes";
+      static final String KATHY = "Kathy";
+      static final String PRINCESS = "Princess";
+      static final String VICKI = "Vicki";
+      static final String VICTORIA = "Victoria";
+
+      // novelty voices
+      static final String ALBERT = "Albert";
+      static final String BAD_NEWS = "Bad News";
+      static final String BAHH = "Bahh";
+      static final String BELLS = "Bells";
+      static final String BOING = "Boing";
+      static final String BUBBLES = "Bubbles";
+      static final String CELLOS = "Cellos";
+      static final String DERANGED = "Deranged";
+      static final String GOOD_NEWS = "Good News";
+      static final String HYSTERICAL = "Hysterical";
+      static final String PIPE_ORGAN = "Pipe Organ";
+      static final String TRINOIDS = "Trinoids";
+      static final String WHISPER = "Whisper";
+      static final String ZARVOX = "Zarvox";
+
+      // throw them in an array so we can iterate over them / pick at random
+      String[] voices = {
+        TING_TING, SIN_JI, LEE, 
+        ALEX, BRUCE, FRED, JUNIOR, RALPH, AGNES, KATHY,
+        PRINCESS, VICKI, VICTORIA, ALBERT, BAD_NEWS, BAHH,
+        BELLS, BOING, BUBBLES, CELLOS, DERANGED, GOOD_NEWS,
+        HYSTERICAL, PIPE_ORGAN, TRINOIDS, WHISPER, ZARVOX
+      };
+      
+      public void say(String script) {
+          // 200 seems like a resonable default speed
+          say(script, ALEX, 200);
+        }
+    
+      public void say(String script, String voice, int speed) {
+        try {
+          Runtime.getRuntime().exec(new String[] {"say", "-v", voice, "[[rate " + speed + "]]" + script});
+        }
+        catch (IOException e) {
+          System.err.println("IOException");
+        }
+      }
 }
+
+	
+	
