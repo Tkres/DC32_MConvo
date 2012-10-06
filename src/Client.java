@@ -9,7 +9,7 @@ public class Client extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String args[]) {
-		PApplet.main(new String[] { "--present", "PSketch" });
+		PApplet.main(new String[] { "--present", "Client" }); //NOTE <- It's trying to reference a PSketch. Changed to client
 	}
 
 	// Core Variables
