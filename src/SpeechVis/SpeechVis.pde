@@ -35,29 +35,45 @@ import ddf.minim.*;
 Minim minim;
 AudioInput in;
 
+int bufferSize = 512;
+
+int swidth = 1024;
+int sheight = 500;
+
+int rootFrame = 0;
+
 void setup()
 {
-  size(512*2, 200*2);
+  size(swidth, sheight);
+  colorMode(HSB,100);
 
   minim = new Minim(this);
   minim.debugOn();
   
   // get a line in from Minim, default bit depth is 16
-  in = minim.getLineIn(Minim.STEREO, 512);
+  in = minim.getLineIn(Minim.STEREO, bufferSize);
+  
+  
 }
 
 void draw()
 {
-  background(255,0,0);
-  pushMatrix();
-  scale(2.0f);
-  stroke(255);
+  rootFrame++;
+  float rateOfRandomColorChange = 0.05f;
+  background( (rootFrame*rateOfRandomColorChange)%100, 80,50);
+  stroke(0,0,100);
   
+  pushMatrix();
   // draw the waveforms
-  for(int i = 0; i < in.bufferSize() - 1; i++)
+  for(int i = 0; i < bufferSize-1; i++)
   {
-    line(i, 50 + in.left.get(i)*50, i+1, 50 + in.left.get(i+1)*50);
-    line(i, 150 + in.right.get(i)*50, i+1, 150 + in.right.get(i+1)*50);
+    int y1 = sheight*1/4;
+    int y2 = sheight*3/4;
+    int xgap = (int)(swidth*1.0/bufferSize);
+    int peakHeight = sheight*1/4;
+    line(i*xgap, y1 + in.left.get(i)*peakHeight, (i+1)*xgap, y1 + in.left.get(i+1)*peakHeight);
+    line(i*xgap, y2 + in.right.get(i)*peakHeight, (i+1)*xgap, y2 + in.right.get(i+1)*peakHeight);
+    
   }
   popMatrix();
 }
