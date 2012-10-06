@@ -9,7 +9,7 @@ public class Client extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String args[]) {
-		PApplet.main(new String[] { "--present", "Client" }); //NOTE <- It's trying to reference a PSketch. Changed to client
+		PApplet.main(new String[] { "--present", "Client" }); //NOTE <- It was trying to reference a PSketch previously. Changed to client
 	}
 
 	// Core Variables
@@ -22,105 +22,16 @@ public class Client extends PApplet {
 	int target_port = 12000;
 	String target_ip0 = "127.0.0.1";
 	String target_ip1 = "192.168.0.194";
-	String target_ip2 = "172.19.19.109";
-	String target_ip3 = "172.24.28.206";
 	String target_ip = target_ip0;
 	int home_port = 13000 + (int) random(1000);
 	String home_ip;
 	
-	// Load in a transcript
-	//Transcript Format: time, text-en, speakerId
-	String transcript0 = "" +
-	"0 \t Good day. \t 1 \n" +
-	"1000 \t Hi There! \t 2 \n" +
-	" \t How are you? \t 1 \n" +
-	" \t Not bad, thank you for asking. \t 2 \n";
-	
-	String transcript1 = ""+
-	"US	Ira is that you?    \n" + 
-	"WB	Friends call me Drella. It is something between Dracula and Cinderella.   \n" + 
-	"US	Say me more about yourself.    \n" + 
-	"WB	I am always sure, I can look into mirror and see nothing. Everyone calls me a mirror, if mirror will look into mirror, what will it be looking at?\n" + 
-	"US	So, you are not existing?    \n" + 
-	"WB	I am the same Nothing as you Ð if youÕll look at this honestly.  \n" + 
-	"US	I can see myself in the mirror,  opposing to you.  \n" + 
-	"WB	What is the date of your birthday?   \n" + 
-	"US	Do you want to come?    \n" + 
-	"WB	As soon as you stop wanting something, you immediately get it. I found out, this is an absolute axiom. ";
-	
-	String transcript2 = ""+
-	"US	Knock Knock :)  \n"+
-	"WB	You know, I have to go pee. Here, we are peeing at our paintings to make real pop-art.    \n"+
-	"US	Well, go.  \n"+
-	"WB	Say, when you are making sex, do you think	ÒIs it really me? Am I really doing this? This is really strange. I was not doing this five minutes ago. I will not do this after some time. What could my mother say? Who could invent this thing?Ó   \n"+
-	"US	Sometimes, this is because of excessive stress. Our problems are controlling us.  \n"+
-	"WB	What do you want?   \n"+
-	"US	Self-determination, as everyone. Maybe I am just bored.   \n"+
-	"WB	It is rude\n"+
-	"US	No more than everything else around us.  \n"+
-	"WB	This is just an idle talk   \n"+
-	"US	And what is not an idle talk then?    \n"+
-	"WB	Love in fantasies is much better than in reality. Never do this Ð excites too much.   \n"+
-	"US	I am thinking exactly about this for the whole morning.    \n"+
-	"WB	What artists do you like?    \n"+
-	"US	Mainly from 20th century. Quite a few.\n"+
-	"WB	Do you like sex?    \n"+
-	"US	Yes. And you?    \n"+
-	"WB	Do not evade a question!\n"+
-	"US	I am not!    \n"+
-	"WB	I think, I am lacking some elements in my organism, that is why I have an inclination to be aÉ. mummyÕs boy. WellÉ Òa girlÓ. No, mummyÕs boy. ÒEternal boyÓ.    \n"+
-	"US	More likely, this is because you have more than enough :)    \n"+
-	"WB	Pop-art is money, embodied. Art, created by superstars. Do you want to be a SUPERSTAR?\n"+
-	"US	no\n"+
-	"WB	You are hiding something from me, right?  \n"+
-	"US	How did you know?    \n"+
-	"WB	Sad languor, emaciated palenessÉ Chick bastardness, deep passive astonishment, charming secret knowledgeÉ Chintzy joy, explosive tropisms, chalky mask of  an evil elf, slightly slavonic lookÉ";
-	
-	String transcript3 = ""+
-	"US	Boring\n" +
-	"WB	Listen, I am already overfilled with problems of my acquaintances. Maybe youÕd better go to a restaurant? Or a supermarket, at least?    \n" +
-	"US	Maybe IÕll do this, but not now.  \n" +
-	"WB	I always turn every problem to its chemical base, because I really think, it is the beginning and the end.  \n" +
-	"US	True. But I canÕt do this every time. \n" +
-	"WB	I am the same Nothing as you, if you look closely.\n" +
-	"US	Everyone is nothing per se.    \n" +
-	"WB	Death	I donÕt believe in it, because when it comes, man is not there already. I canÕt tell anything about it, because I am not ready for it.    \n" +
-	"US	And I didnÕt ask you ;) \n" +
-	"WB	I always turn every problem to its chemical base, because I really think, it is the beginning and the end.   \n" +
-	"US	Seems like someone is stuck. Heh :)   \n" +
-	"WB	Until time, when someone was shooting at me, I always thought, I am only half-present here Ð I always suspected, I am watching a TV instead of living a life.     \n" +
-	"US	I watch TV. At least sometimes.  \n" +
-	"WB	Yes, you canÕt go against your natureÉ    \n" +
-	"US	One can try.   \n" +
-	"WB	Though I also can be mistaken.  \n" +
-	"US	Anyone can make mistakes.  Quite enough.  \n" +
-	"WB	You are philosopher...\n" +
-	"US	Same as everyone.   \n" +
-	"WB	I understand nothing, except GREEN BANKNOTES. Not stock, not bearer-cheques, not traveling-cheques.  And especially not terrorism.   \n" +
-	"US	What else? \n" +
-	"WB	Very often I do what I really donÕt want to do, only because I am tortured by envy Ð someone else can do this, instead of me. As a matter of fact, I always buy things and people, only because I am jealous Ð if someone else will buy them, and they will be good in the end.";
-	
-	String transcript4 =  ""+
-			"US	Oh what would people do without technology, \n" +
-			"WB	Perhaps we would just twiddle our thumbs,    \n" +
-			"US	What I would do is play the drums,  \n" +
-			"WB	In classes there would not be computers like biology,  \n" +
-			"US	Bill Gates is the man we should be thanking, \n" +
-			"WB	He gave us the gift of Microsoft for computers, \n" +
-			"US	Someone invented the bus for commuters,    \n" +
-			"WB	Now someone wanted somewhere to put their money so then there was banking,    \n" +
-			"US	In the class of Dr. Gen, \n" +
-			"WB	Everything is on computers and all we need is fingers to type,   \n" +
-			"US	So there is no reason to gripe,   \n" +
-			"WB	Everyone hail technology and say amen";
-	
-	String transcript = transcript4;
-	
 	public void setup() {
-		swidth = 640;
-		sheight = 480;
+		swidth = 50;
+		sheight = 50;
 		size(swidth, sheight);
 		colorMode(HSB, 100);
+		background(30,50,90);
 		smooth();
 
 		// initialize communication
@@ -129,72 +40,20 @@ public class Client extends PApplet {
 		myTargetLocation = new NetAddress(target_ip, target_port);
 		this.sendMyLocationToTarget();
 
-		//TextToSpeechMac.say("Hello there!", "Alex", 250);
-
 	}
-	
-	String mySpeakerId = "US";
-
 
 	public void draw() {
+		
+	}
+	
 
-		// divide badass transcript into cocaine lines
-			// divide lines into datum
-
-		// divide transcript into lines
-		// divide lines into datum ("\t" = horizontal tab; "\n" = new line)
-
-		String[] lines = transcript.split("\n");
-		for (int i=0; i<lines.length; i++) {
-			
-			if (iPlayTranscript==0) break;
-			
-			String[] datum = lines[i].split("\t");
-			println(datum);
-			
-			String speaker = datum[0].trim();
-			String text = datum[1].trim();
-			String chosenSpeaker = TextToSpeechMac.ALEX;
-			if (speaker.equals("US")) chosenSpeaker = TextToSpeechMac.KATHY;
-			
-			if (speaker.equals(mySpeakerId)) {
-				
-				try {
-					  Runtime.getRuntime().exec(new String[] {"drutil", "tray", "open"});
-				  }
-				  catch (IOException e) {
-					  System.err.println("IOException");
-				  }
-				
-				TextToSpeechMac.say(text, chosenSpeaker, 200);
-				
-				
-				
-			}
-			//delay(text.split(" ").length*6*60);
-			
-			delay(text.length()*80);
-			
-			try {
-				  Runtime.getRuntime().exec(new String[] {"drutil", "tray", "close"});
-			  }
-			  catch (IOException e) {
-				  System.err.println("IOException");
-			  }
-			
-			/*
-			String text = datum[1];
-			int speakerId = Integer.parseInt(datum[2].trim());
-			
-			String speaker = "";
-			if (speakerId==1) speaker = TextToSpeechMac.ALEX;
-			if (speakerId==2) speaker = TextToSpeechMac.VICKI;
-			if (speakerId==3) speaker = TextToSpeechMac.TRINOIDS;
-			TextToSpeechMac.say(text, speaker, 200);
-			*/
-			//delay(text.length()*100);
+	public void keyPressed() {
+		// resend location to server
+		if (key=='s') {
+			this.sendMyLocationToTarget();
 		}
 	}
+	
 	
 	// -----------------------------------------------------------------------------
 	// COMMUNICATION.
@@ -208,13 +67,29 @@ public class Client extends PApplet {
 	int iPlayTranscript = 0;
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
-		//println(addrPattern);
-		//println(theOscMessage);
-		if (addrPattern.equals("/playTranscript")) {
-			iPlayTranscript = theOscMessage.get(0).intValue();
+		
+		if (addrPattern.equals("/say")) {
+			String text = theOscMessage.get(0).stringValue();
+			String voice = theOscMessage.get(1).stringValue();
+			TextToSpeechMac.say(text, voice, 250);
 		}
 
 	}
+	
+	
+	// -----------------------------------------------------------------------------
+	// OTHER FUNCTIONS.
+	public void commandTray(String command) {
+		// command equals open or close
+		try {
+			  Runtime.getRuntime().exec(new String[] {"drutil", "tray", command});
+		  }
+		  catch (IOException e) {
+			  System.err.println("Error commanding tray.");
+			  System.err.println("IOException: "+e);
+		  }
+	}
+	
 	
 	
 }

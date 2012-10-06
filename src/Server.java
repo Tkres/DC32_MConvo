@@ -8,7 +8,7 @@ import processing.core.PApplet;
 public class Server extends PApplet {
 	private static final long serialVersionUID = 1L;
 	public static void main(String args[]) {
-		PApplet.main(new String[] { "--present", "PSketch" });
+		PApplet.main(new String[] { "--present", "Server" });
 	}
 	int swidth, sheight;
 	
@@ -25,10 +25,11 @@ public class Server extends PApplet {
 	// SETUP.
 	
 	public void setup() {
-		swidth = 800; 
-		sheight = 600;
+		swidth = 50; 
+		sheight = 50;
 		size(swidth, sheight);
 		colorMode(HSB,100);
+		background(30,70,50);
 		smooth();
 		
 		targetLocations = new ArrayList<NetAddress>();
@@ -47,24 +48,73 @@ public class Server extends PApplet {
 		
 	}
 	
-	boolean playTranscript = false;
-	
 	public void mousePressed() {
-		playTranscript = !playTranscript;
-		System.out.println("playTranscript: "+playTranscript);
+		this.sendSpeechToAll("mouse pressed");
+	}
+	
+	public void keyPressed() {
 		
-		for (NetAddress targetLocation : targetLocations) {
-		
-			OscMessage myMessage = new OscMessage("/playTranscript");
-			if (playTranscript) {
-				myMessage.add(1);
+		// DIALOGUE TEST
+		if (key=='d') {
+			// and at least 2 clients
+			if (targetLocations.size()>=2) {
+				NetAddress Bot1 = targetLocations.get(targetLocations.size()-1);
+				NetAddress Bot2 = targetLocations.get(targetLocations.size()-2);
+				String voice1 = TextToSpeechMac.VICKI;
+				String voice2 = TextToSpeechMac.ALEX;
+				//String transcript = "Hello.\nHi\nHow are you?\nGood Thanks.";
+				String transcript2 = "	Oh what would people do without technology, \n" +
+						"	Perhaps we would just twiddle our thumbs,    \n" +
+						"	What I would do is play the drums,  \n" +
+						"	In classes there would not be computers like biology,  \n" +
+						"	Bill Gates is the man we should be thanking, \n" +
+						"	He gave  the gift of Microsoft for computers, \n" +
+						"	Someone invented the bus for commuters,    \n" +
+						"	Now someone wanted somewhere to put their money so then there was banking,    \n" +
+						"	In the class of Dr. Gen, \n" +
+						"	Everything is on computers and all we need is fingers to type,   \n" +
+						"	So there is no reason to gripe,   \n" +
+						"	Everyone hail technology and say amen. \n" +
+						"   amen.";
+				String[] lines = transcript2.split("\n");
+				for (int i=0; i<lines.length; i++) {
+					if (i%2==0) {
+						sendSpeech(lines[i], voice1, Bot1);
+					} else {
+						sendSpeech(lines[i], voice2, Bot2);
+					}
+					delay(lines[i].split(" ").length*300);
+					//delay(lines[i].length()*80);
+				}
 			} else {
-				myMessage.add(0);
+				TextToSpeechMac.say("Unfortunately only "+targetLocations.size()+" clients were found. At least two is needed for dialogue.");
 			}
-			
-			oscP5.send(myMessage, targetLocation);
+		}
+		// ID Test (say what id you are).
+		if (key=='i') {
+			// may be a useful tool
+			for (NetAddress targetLocation : targetLocations) {
+				String text = "I am number "+targetLocations.indexOf(targetLocation);
+				sendSpeech(text, targetLocation);
+				delay(text.split(" ").length*300);
+			}
 		}
 		
+		// OTHER KEYS TEST.
+		String speech = "key pressed";
+		if (key=='a') {
+			speech = "Aloha!";
+			sendSpeechToAll(speech);
+		}
+		if (key=='t') {
+			speech = "" +
+					"0 \t Good day. This has been sent from server godhead. How are you? \t 1 \n" +
+					" \t Hi There! What's up? \t 2 \n" +
+					" \t How are you? \t 1 \n" +
+					" \t Not bad, thank you for asking. \t 2 \n";
+			sendSpeechToAll(speech);
+			// Ok it seems that short lengths of text via osc are possible. Will have to test this setup on screens (and if it doesn't work for longer scripts-they'll have to be transcripts).
+		}		
 		
 	}
 	
@@ -88,36 +138,49 @@ public class Server extends PApplet {
 		String client_ip = theOscMessage.get(0).stringValue();
 		int client_port = theOscMessage.get(1).intValue();
 		NetAddress newTargetLocation = new NetAddress(client_ip, client_port);
-		targetLocations.add(newTargetLocation);
-		System.out.println("Added Client." + newTargetLocation);
-		sendTranscript();
+		if (!targetLocations.contains(newTargetLocation)) {
+			targetLocations.add(newTargetLocation);
+			System.out.println("Added Client." + newTargetLocation);
+			this.sendSpeech("Yay, Mom knows I exist now.", newTargetLocation);
+		} else {
+			this.sendSpeech("Mom already knows about me.", newTargetLocation);
+		}
+		
 	}
 	// Parse msgs from face detection sentient
 	public void parseMessageHumanDetection(OscMessage theOscMessage) {
 		String humanDetected = theOscMessage.get(0).stringValue();
 		System.out.println("HUMAN DETECTED.");
-		sendTranscript(humanDetected);
+		TextToSpeechMac.say(humanDetected);
 	}
 	
-	public void sendTranscript() {
-		// for testing purposes, client that can accept transcript is first connected to targetLocations.
-		OscMessage myMessage = new OscMessage("/transcript");
-		//Transcript Format: time, text-en, speakerId
-		String transcript = "" +
-				"0 \t Good day. This has been sent from server godhead. How are you? \t 1 \n" +
-				" \t Hi There! What's up? \t 2 \n" +
-				" \t How are you? \t 1 \n" +
-				" \t Not bad, thank you for asking. \t 2 \n";
-		myMessage.add(transcript);
-		oscP5.send(myMessage, targetLocations.get(0));
+	// -----------------------------------------------------------------------------
+	// COMMUNICATIONS: SPEECH COMMANDS
+	
+	public void sendSpeechToAll(String speech) {
+		OscMessage myMessage = new OscMessage("/say");
+		myMessage.add(speech);
+		myMessage.add(TextToSpeechMac.ALEX);
+		//oscP5.send(myMessage, targetLocations.get(targetLocations.size()-1));
+		// send to all.
+		for (NetAddress targetLocation : targetLocations) {
+			oscP5.send(myMessage,targetLocation);
+		}
 	}
-	public void sendTranscript(String s) {
-		// for testing purposes, client that can accept transcript is first connected to targetLocations.
-		OscMessage myMessage = new OscMessage("/transcript");
-		//Transcript Format: time, text-en, speakerId
-		String transcript = s;
-		myMessage.add(transcript);
-		oscP5.send(myMessage, targetLocations.get(0));
+	
+	public void sendSpeech(String speech, NetAddress targetLocation) {
+		OscMessage myMessage = new OscMessage("/say");
+		myMessage.add(speech);
+		myMessage.add(TextToSpeechMac.ALEX);
+		oscP5.send(myMessage, targetLocation);
 	}
+	
+	public void sendSpeech(String speech, String voice, NetAddress targetLocation) {
+		OscMessage myMessage = new OscMessage("/say");
+		myMessage.add(speech);
+		myMessage.add(voice);
+		oscP5.send(myMessage, targetLocation);
+	}
+	
 	
 }
