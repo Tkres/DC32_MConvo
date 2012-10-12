@@ -8,6 +8,8 @@ public class TextToSpeechMac {
 		  static final String TING_TING = "Ting-Ting"; //CHINESE
 		  static final String SIN_JI = "Sin-Ji"; //HK
 		  static final String LEE = "Lee"; //Australian
+		  static final String KAREN = "Karen"; //Australian
+		  static final String SAMANTHA = "Samantha"; // US-Female
 		  
 		  // male voices
 		  static final String ALEX = "Alex";
@@ -41,7 +43,7 @@ public class TextToSpeechMac {
 
 		  // throw them in an array so we can iterate over them / pick at random
 		  static String[] voices = {
-		    TING_TING, SIN_JI, LEE, 
+		    TING_TING, SIN_JI, LEE, SAMANTHA, KAREN, 
 		    ALEX, BRUCE, FRED, JUNIOR, RALPH, AGNES, KATHY,
 		    PRINCESS, VICKI, VICTORIA, ALBERT, BAD_NEWS, BAHH,
 		    BELLS, BOING, BUBBLES, CELLOS, DERANGED, GOOD_NEWS,
