@@ -8,6 +8,7 @@ import oscP5.OscP5;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.serial.Serial;
 
 /**
  * Client that can detect faces via OpenCV. Displays it's computer vision in a applet window.
@@ -46,11 +47,16 @@ public class Client_OpenCV extends PApplet {
 	String home_ip;
 	// OpenCV
 	OpenCV opencv;
+	Rectangle[] faces;
 	PImage img; // image captured from webcam
 	int opencv_contrast = 120;
 	int opencv_brightness = 54;
 	boolean humanIsPresent = false;
 	int agitation = 0; // agitation variable!
+	
+	// serial to arduino
+	Serial serialPort;
+
 	
 	
 	public void setup() {
@@ -73,7 +79,9 @@ public class Client_OpenCV extends PApplet {
 		opencv = new OpenCV(this);
 		opencv.capture(cwidth, cheight); // open video stream
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
-	    
+	    // init serialPort to arduino
+	    serialPort = new Serial(this, Serial.list()[6], 9600);
+	    println(Serial.list());
 	}
 
 	// -----------------------------------------------------------------------------
@@ -81,18 +89,34 @@ public class Client_OpenCV extends PApplet {
 		drawOpenCV();
 	}
 	
+	
+	// -----------------------------------------------------------------------------
+	// SERVOS.
+	public void moveServos() {
+		if(faces.length != 0) {
+			int sPosXUnmapped = faces[0].x+faces[0].width/2;
+			int sPosYUnmapped = faces[0].y+faces[0].height/2;
+			int sPosX = 179 - round(map(sPosXUnmapped, 0, cwidth, 0, 179));
+			int sPosY = 179 - round(map(sPosYUnmapped, 0, cheight, 0, 179));
+			serialPort.write(sPosX + "s");
+			serialPort.write(sPosY + "w");
+		}
+	}
+	
+	
 	// -----------------------------------------------------------------------------
 	// OPENCV.
 	public void drawOpenCV() {
 		opencv.read();
+		opencv.flip(OpenCV.FLIP_HORIZONTAL);
 		opencv.convert(GRAY);
 		// pretty optimum settings, taken from my Dreams in the Witch House project
         opencv.brightness(38);
         opencv.contrast(41);
 		// detect faces
 	//	Rectangle[] faces = opencv.detect(1.2f, 2, OpenCV.HAAR_DO_CANNY_PRUNING, 40, 40);
-		Rectangle[] faces = opencv.detect(1.2f, 2, OpenCV.HAAR_DO_ROUGH_SEARCH, 40, 40); // supposed to be faster, HAAR_FIND_BIGGEST_OBJECT is supposed to also be set. 
-
+		faces = opencv.detect(1.2f, 2, OpenCV.HAAR_DO_ROUGH_SEARCH, 40, 40); // supposed to be faster, HAAR_FIND_BIGGEST_OBJECT is supposed to also be set. 
+		
 		// display the image
 		img = opencv.image();
 		// tile the screen once a human is present.
@@ -101,10 +125,12 @@ public class Client_OpenCV extends PApplet {
 		if(!humanIsPresent && faces.length != 0) {
 			tileScreen();
 		}
-		if(humanIsPresent)
+		if(humanIsPresent) {
 			drawTiledImages(faces);
-		else
+			moveServos();
+		} else {
 			image(img,0,0, swidth, sheight);
+		}
 		
 		checkAgitation(faces);
 		checkForHuman(faces);
@@ -138,7 +164,7 @@ public class Client_OpenCV extends PApplet {
 			for(Integer i : facesAverage2) {
 				avg2 += i;
 			}
-			System.out.println("avg1: " + avg1 + ", avg2: " + avg2);
+//			System.out.println("avg1: " + avg1 + ", avg2: " + avg2);
 			if(avg1/facesAverage.size() <= avg2/facesAverage2.size()) {
 				// human has moved closer. React!
 				System.out.println("avg1: " + avg1 + ", avg2: " + avg2 + ", diff: " + (avg2-avg1));
