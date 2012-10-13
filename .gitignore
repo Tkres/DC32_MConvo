@@ -24,3 +24,5 @@ Thumbs.db
 *.class
 
 bin/Client_b.class
+
+bin/SpeechVis/SpeechVis.pde
