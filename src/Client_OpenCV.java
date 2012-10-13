@@ -56,8 +56,6 @@ public class Client_OpenCV extends PApplet {
 	
 	// serial to arduino
 	Serial serialPort;
-
-	
 	
 	public void setup() {
 		swidth = 640;
