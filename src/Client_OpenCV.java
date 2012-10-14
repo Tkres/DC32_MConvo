@@ -75,7 +75,7 @@ public class Client_OpenCV extends PApplet {
 	    font = new PFont(); font = loadFont("../resources/AndaleMono-12.vlw"); textFont(font, fontSize);	    
 		// init openCV
 		opencv = new OpenCV(this);
-		opencv.capture(cwidth, cheight); // open video stream
+		opencv.capture(cwidth, cheight, 6); // open video stream. index=6 is the A4tech webcam
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
 	    // init serialPort to arduino
 	    serialPort = new Serial(this, Serial.list()[6], 9600);
@@ -91,6 +91,10 @@ public class Client_OpenCV extends PApplet {
 	// -----------------------------------------------------------------------------
 	// SERVOS.
 	public void moveServos() {
+		/* uses Arduino sketch "Pan_Tilt_Servos"
+		 * servo1 is x-axis, connected to digital out pin 9 (analogue)
+		 * servo2 is y-axis, connected to digital out pin 10 (analogue)
+		 */
 		if(faces.length != 0) {
 			int sPosXUnmapped = faces[0].x+faces[0].width/2;
 			int sPosYUnmapped = faces[0].y+faces[0].height/2;
