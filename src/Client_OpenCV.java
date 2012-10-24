@@ -82,7 +82,7 @@ public class Client_OpenCV extends PApplet {
 		opencv.capture(cwidth, cheight, 6); // open video stream. index=6 is the A4tech webcam
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
 	    // init serialPort to arduino
-	    serialPort = new Serial(this, Serial.list()[6], 9600);
+	    serialPort = new Serial(this, Serial.list()[5], 9600); // marks computer uses [6]	
 	 // get this object to read the serial port and maybe flush it also instead of the arduino?
 	    // said ollie.
 	}
@@ -122,7 +122,7 @@ public class Client_OpenCV extends PApplet {
 				if(map(sPosXUnmapped,0,cwidth,0,180) > 70) {
 					realServoPosX-=2;
 				}
-				println("realServoPosX sent. New realServoPosX is: " + realServoPosX);
+				//println("realServoPosX sent. New realServoPosX is: " + realServoPosX);
 				counter = 0;
 			}
 			realServoPosX = constrain(realServoPosX, 10, 160); //10, 160 arbitrary

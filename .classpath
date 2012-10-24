@@ -9,6 +9,12 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="libraries/Processing/core.jar" sourcepath="libraries/Processing/src/src.zip"/>
 	<classpathentry kind="lib" path="libraries/oscP5.jar"/>
+	<classpathentry kind="lib" path="libraries/serial/serial.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="DC32_MConvo/libraries/serial/macosx"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libraries/serial/RXTXcomm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
