@@ -54,8 +54,11 @@ public class Client_OpenCV extends PApplet {
 	boolean humanIsPresent = false;
 	int agitation = 0; // agitation variable!
 	
+	int realServoPosX = 70; // 70 because its center.
+	
 	// serial to arduino
 	Serial serialPort;
+	
 	
 	public void setup() {
 		swidth = 640;
@@ -66,6 +69,7 @@ public class Client_OpenCV extends PApplet {
 		smooth();
 	    noFill();
 	    frameRate(FRAME_RATE);
+	    
 	    // init communication
 	    oscP5 = new OscP5(this, home_port);
 	    home_ip = oscP5.ip();
@@ -79,7 +83,8 @@ public class Client_OpenCV extends PApplet {
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
 	    // init serialPort to arduino
 	    serialPort = new Serial(this, Serial.list()[6], 9600);
-	    println(Serial.list());
+	 // get this object to read the serial port and maybe flush it also instead of the arduino?
+	    // said ollie.
 	}
 
 	// -----------------------------------------------------------------------------
@@ -90,19 +95,61 @@ public class Client_OpenCV extends PApplet {
 	
 	// -----------------------------------------------------------------------------
 	// SERVOS.
+	
+	int counter = 0;
 	public void moveServos() {
 		/* uses Arduino sketch "Pan_Tilt_Servos"
 		 * servo1 is x-axis, connected to digital out pin 9 (analogue)
 		 * servo2 is y-axis, connected to digital out pin 10 (analogue)
 		 */
+		int captureXCenter = cwidth/2;
+		int captureYCenter = cheight/2;
 		if(faces.length != 0) {
 			int sPosXUnmapped = faces[0].x+faces[0].width/2;
 			int sPosYUnmapped = faces[0].y+faces[0].height/2;
-			int sPosX = 179 - round(map(sPosXUnmapped, 0, cwidth, 0, 179));
-			int sPosY = 179 - round(map(sPosYUnmapped, 0, cheight, 0, 179));
-			serialPort.write(sPosX + "s");
-			serialPort.write(sPosY + "w");
+			
+			
+			//trying to get the webcam on top of the pan/tilt motor to move so to make face the center
+			
+			// 70 is center!
+			// 0 is on right, 180 is on left. 
+			
+			counter++;
+			if(counter >= 2) {
+				if(map(sPosXUnmapped,0,cwidth,0,180) < 70) {
+					realServoPosX+=2;
+				}
+				if(map(sPosXUnmapped,0,cwidth,0,180) > 70) {
+					realServoPosX-=2;
+				}
+				println("realServoPosX sent. New realServoPosX is: " + realServoPosX);
+				counter = 0;
+			}
+			realServoPosX = constrain(realServoPosX, 10, 160); //10, 160 arbitrary
+			
+			
+			int sPosY = round(map(sPosYUnmapped, 0, cheight, 0, 50));
+			//int sPosY2 = round(map(sPosYUnmapped, 0, cheight, 0, 50)); // sPosY2 is diff just cause of the way I created the pan/tilt.
+			
+			if(frameCount % 4 == 0) {
+				println("realServoPosX: " + realServoPosX);
+				
+//				serialPort.write(new byte[]{'s'});
+//				serialPort.write(realServoPosX);
+				serialPort.write("s" + realServoPosX); // s being sentient1 x-axis
+				
+				
+			//	serialPort.write(sPosY + "w"); // w being sentient1 y-axis
+				//serialPort.write(140 + "w"); //testing only!
+			} else {
+//				serialPort.write(sPosX + "k");
+//				serialPort.write(sPosY2 + "l");
+			}
 		}
+		
+		delay(100);
+		
+		
 	}
 	
 	
@@ -126,6 +173,7 @@ public class Client_OpenCV extends PApplet {
 		// the close you get or the longer you stay.
 		if(!humanIsPresent && faces.length != 0) {
 			tileScreen();
+			image(img,0,0,swidth,sheight); // temporary only
 		}
 		if(humanIsPresent) {
 			drawTiledImages(faces);
