@@ -26,6 +26,22 @@ public class Client extends PApplet {
 	int home_port = 13000 + (int) random(1000);
 	String home_ip;
 	
+	int setFramerate = 30;
+	
+	ContinuousServerPinger continuousServerPinger = new ContinuousServerPinger();
+	
+	public class ContinuousServerPinger {
+		int serverCheckInterval = 30*setFramerate; //every 30 seconds
+		int timer = 0;
+		void run() {
+			if (timer==serverCheckInterval) {
+				sendMyLocationToTarget();
+				timer = 0;
+			}
+			timer++;
+		}
+	}
+	
 	public void setup() {
 		swidth = 50;
 		sheight = 50;
@@ -39,13 +55,20 @@ public class Client extends PApplet {
 		home_ip = oscP5.ip();
 		myTargetLocation = new NetAddress(target_ip, target_port);
 		this.sendMyLocationToTarget();
-
+		
+		frameRate(setFramerate);
 	}
-
+	
+	
 	public void draw() {
+		
+		continuousServerPinger.run();
 		
 	}
 	
+	public void mousePressed() {
+		this.sendMyLocationToTarget();
+	}
 
 	public void keyPressed() {
 		// resend location to server
@@ -71,7 +94,12 @@ public class Client extends PApplet {
 		if (addrPattern.equals("/say")) {
 			String text = theOscMessage.get(0).stringValue();
 			String voice = theOscMessage.get(1).stringValue();
-			TextToSpeechMac.say(text, voice, 250);
+			TTS.say(text, voice, 250);
+		}
+		
+		if (addrPattern.equals("/tray")) {
+			String cmd = theOscMessage.get(0).stringValue();
+			commandTray(cmd);
 		}
 
 	}

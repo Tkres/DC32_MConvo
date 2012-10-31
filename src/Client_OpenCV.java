@@ -141,6 +141,7 @@ public class Client_OpenCV extends PApplet {
 				
 			//	serialPort.write(sPosY + "w"); // w being sentient1 y-axis
 				//serialPort.write(140 + "w"); //testing only!
+				
 			} else {
 //				serialPort.write(sPosX + "k");
 //				serialPort.write(sPosY2 + "l");

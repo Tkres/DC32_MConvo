@@ -1,18 +1,21 @@
 import java.io.IOException;
 
+// Commented so it ommits voices higher than OSX10.4
 
-public class TextToSpeechMac {
+public class TTS {
 		  // Store the voices, makes for nice auto-complete in Eclipse
 
 		  // nuance voices - on OSX 10.8 ONLY.
+		/*
 		  static final String TING_TING = "Ting-Ting"; //CHINESE
 		  static final String SIN_JI = "Sin-Ji"; //HK
 		  static final String LEE = "Lee"; //Australian
 		  static final String KAREN = "Karen"; //Australian
 		  static final String SAMANTHA = "Samantha"; // US-Female
-		  
+		  */
+	
 		  // male voices
-		  static final String ALEX = "Alex";
+		  //static final String ALEX = "Alex";
 		  static final String BRUCE = "Bruce";
 		  static final String FRED = "Fred";
 		  static final String JUNIOR = "Junior";
@@ -43,8 +46,8 @@ public class TextToSpeechMac {
 
 		  // throw them in an array so we can iterate over them / pick at random
 		  static String[] voices = {
-		    TING_TING, SIN_JI, LEE, SAMANTHA, KAREN, 
-		    ALEX, BRUCE, FRED, JUNIOR, RALPH, AGNES, KATHY,
+		    //TING_TING, SIN_JI, LEE, SAMANTHA, KAREN, ALEX, 
+		     BRUCE, FRED, JUNIOR, RALPH, AGNES, KATHY,
 		    PRINCESS, VICKI, VICTORIA, ALBERT, BAD_NEWS, BAHH,
 		    BELLS, BOING, BUBBLES, CELLOS, DERANGED, GOOD_NEWS,
 		    HYSTERICAL, PIPE_ORGAN, TRINOIDS, WHISPER, ZARVOX
@@ -52,7 +55,7 @@ public class TextToSpeechMac {
 		  
 		  public static void say(String script) {
 			    // 200 seems like a resonable default speed
-			    say(script, ALEX, 200);
+			    say(script, BRUCE, 200);
 			  }
 		
 		  public static void say(String script, String voice, int speed) {

@@ -14,6 +14,13 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="DC32_MConvo/libraries/serial/macosx"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libraries/minim/library/jl1.0.jar"/>
+	<classpathentry kind="lib" path="libraries/minim/library/jsminim.jar"/>
+	<classpathentry kind="lib" path="libraries/minim/library/minim-spi.jar"/>
+	<classpathentry kind="lib" path="libraries/minim/library/minim.jar"/>
+	<classpathentry kind="lib" path="libraries/minim/library/mp3spi1.9.4.jar"/>
+	<classpathentry kind="lib" path="libraries/minim/library/tritonus_aos.jar"/>
+	<classpathentry kind="lib" path="libraries/minim/library/tritonus_share.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libraries/serial/RXTXcomm.jar"/>
 	<classpathentry kind="output" path="bin"/>
