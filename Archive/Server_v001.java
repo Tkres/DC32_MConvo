@@ -8,7 +8,6 @@ import netP5.NetAddress;
 import oscP5.OscMessage;
 import oscP5.OscP5;
 import processing.core.PApplet;
-import processing.serial.Serial;
 
 public class Server extends PApplet {
 	private static final long serialVersionUID = 1L;
@@ -29,11 +28,6 @@ public class Server extends PApplet {
 	// -----------------------------------------------------------------------------
 	// SETUP.
 	
-	PrinterController printer;
-	TurntableController turntable;
-	boolean turntableControlOn = true;
-	boolean printerControlOn = true;
-	
 	public void setup() {
 		swidth = 50; 
 		sheight = 50;
@@ -49,27 +43,6 @@ public class Server extends PApplet {
 		println("Server IP: "+home_ip);
 		println("Server Port: "+home_port);
 		
-		// Get SerialPorts Listing.
-		println("Serial list: ");
-		println(Serial.list());
-		
-		// Setup PRINTER
-		try {
-			printer = new PrinterController(this, 4);
-		} catch(Exception e) {
-			System.err.println("Problem initializing printer: "+e);
-			printerControlOn = false;
-		}
-		
-		// Setup TURNTABLES
-		try {
-			turntable = new TurntableController(this, 5);
-		} catch(Exception e) {
-			System.err.println("Problem initializing turntable: "+e);
-			turntableControlOn = false;
-		}
-		
-		println("Setup complete.");
 	}
 	
 	
@@ -81,8 +54,6 @@ public class Server extends PApplet {
 	
 	public void mousePressed() {
 		this.sendSpeechToAll("mouse pressed");
-		
-		
 	}
 	
 	public void keyPressed() {
@@ -108,11 +79,6 @@ public class Server extends PApplet {
 		
 		// DIALOGUE TEST
 		if (key=='d') {
-			
-			if (targetLocations.size()>0) {
-			
-			if (printerControlOn) printer.sendMessage("Dialogue Begun.");
-			
 			String[] voices = {TTS.VICKI,TTS.BRUCE,TTS.TRINOIDS, TTS.BELLS, TTS.ZARVOX, TTS.HYSTERICAL};
 			ArrayList<NetAddress> bots = new ArrayList<NetAddress>();
 			for (int i=0; i<targetLocations.size(); i++) {
@@ -136,23 +102,8 @@ public class Server extends PApplet {
 					}
 				}
 				
-				// 
-				int turntableMsg = (botid%4)+1;
-				if (turntableControlOn) turntable.sendMessage(turntableMsg+"");
-				// TODO: ^ test the above with setup.
-					// note down difficulty of setup.
-				
-				// TODO: update client code on all computers (FIRST FIND SERVER ADDRESS).
-				
-				// TODO: Film a short clip for Jess.
-				
-				// Delay based on length of speech
 				delay(remainingDurationOfTTS(voices[botid], 250, lines[i]));
-				//TODO: note: should also delay a minimum of the time required to turn computers. (if on)
-			}
-			
-			} else {
-				println("Dialogue can't be started with only "+targetLocations.size()+" clients.");
+				
 			}
 		}
 
@@ -166,9 +117,21 @@ public class Server extends PApplet {
 			}
 		}
 		
-		if (key=='p') {
-			if (printerControlOn) printer.sendMessage("The millis() is: "+millis());
+		// OTHER KEYS TEST.
+		String speech = "key pressed";
+		if (key=='a') {
+			speech = "Aloha!";
+			sendSpeechToAll(speech);
 		}
+		if (key=='t') {
+			speech = "" +
+					"0 \t Good day. This has been sent from server godhead. How are you? \t 1 \n" +
+					" \t Hi There! What's up? \t 2 \n" +
+					" \t How are you? \t 1 \n" +
+					" \t Not bad, thank you for asking. \t 2 \n";
+			sendSpeechToAll(speech);
+			// Ok it seems that short lengths of text via osc are possible. Will have to test this setup on screens (and if it doesn't work for longer scripts-they'll have to be transcripts).
+		}		
 		
 	}
 	

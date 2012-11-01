@@ -20,9 +20,13 @@ public class Client extends PApplet {
 	OscP5 oscP5;
 	NetAddress myTargetLocation;
 	int target_port = 12000;
+	
 	String target_ip0 = "127.0.0.1";
 	String target_ip1 = "192.168.0.194";
-	String target_ip = target_ip0;
+	String target_ip2 = "192.168.0.159";
+	String target_ip3 = "192.168.0.13";
+	String target_ip = target_ip3;
+	
 	int home_port = 13000 + (int) random(1000);
 	String home_ip;
 	
@@ -39,6 +43,9 @@ public class Client extends PApplet {
 				timer = 0;
 			}
 			timer++;
+		}
+		void resetTimer() {
+			timer = 0;
 		}
 	}
 	
@@ -90,6 +97,8 @@ public class Client extends PApplet {
 	int iPlayTranscript = 0;
 	public void oscEvent(OscMessage theOscMessage) {
 		String addrPattern = theOscMessage.addrPattern();
+		
+		continuousServerPinger.resetTimer(); //reset whenever a message is recieved.
 		
 		if (addrPattern.equals("/say")) {
 			String text = theOscMessage.get(0).stringValue();
