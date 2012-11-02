@@ -25,7 +25,8 @@ public class Client extends PApplet {
 	String target_ip1 = "192.168.0.194";
 	String target_ip2 = "192.168.0.159";
 	String target_ip3 = "192.168.0.13";
-	String target_ip = target_ip3;
+	
+	String target_ip = target_ip0;
 	
 	int home_port = 13000 + (int) random(1000);
 	String home_ip;
