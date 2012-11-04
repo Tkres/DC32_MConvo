@@ -111,9 +111,7 @@ public class Client extends PApplet {
 			String cmd = theOscMessage.get(0).stringValue();
 			commandTray(cmd);
 		}
-
 	}
-	
 	
 	// -----------------------------------------------------------------------------
 	// OTHER FUNCTIONS.

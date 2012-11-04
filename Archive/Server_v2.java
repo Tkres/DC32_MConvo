@@ -10,7 +10,7 @@ import oscP5.OscP5;
 import processing.core.PApplet;
 import processing.serial.Serial;
 
-public class Server extends PApplet {
+public class Server_v2 extends PApplet {
 	
 	boolean turntableControlOn = false;
 	boolean printerControlOn = true;
@@ -95,12 +95,7 @@ public class Server extends PApplet {
 
 		String[] lines;
 		
-
 		ArrayList<Boolean> traysOpen;
-		Countdown trayToRandomlyChangeTimer;
-		int trayToRandomlyChange;
-		
-		String[] voices = { TTS.VICKI, TTS.BRUCE, TTS.TRINOIDS, TTS.ZARVOX, TTS.BOING, TTS.HYSTERICAL };
 		
 		Dialogue1() {
 
@@ -117,33 +112,15 @@ public class Server extends PApplet {
 			dialogueDone = false;
 			
 			traysOpen = new ArrayList<Boolean>();
-			for (int i=0; i<10; i++) { //shortcut, assuming a max of 10 clients
+			for (int i=0; i<100; i++) { //shortcut - (100 or so possible clients)
 				traysOpen.add(false);
 			}
-			trayToRandomlyChangeTimer = new Countdown(0);
-			trayToRandomlyChange = 0;
 		}
-		
-		
-		// next tray command
-		CountdownToTrayCommand trayChangeCounter;
 		
 		void run() {
 			if (!dialogueDone) {
 				
-				if (trayChangeCounter != null) {
-					trayChangeCounter.run();
-					
-					// creating a new trayChangeCounter if it has stopped, only create if the time to change to next speech is far away (don't want overlap/lagging of OSC commands)
-					if (trayChangeCounter.hasStopped()) {
-						if (currentSpeechTimer.timeRemaining()>500) {
-							// create a new timer, between 500 and timeremaining-500
-							int randBotId = Math.min( (int) random(targetLocations.size()), targetLocations.size()-1);
-							trayChangeCounter = new CountdownToTrayCommand((int)(random(100,currentSpeechTimer.timeRemaining()-500)), !traysOpen.get(randBotId), targetLocations.get(randBotId));
-							traysOpen.set(randBotId, !traysOpen.get(randBotId));
-						}
-					}
-				}
+				
 				
 				if (currentSpeechTimer.hasStopped()) {
 					curLine += 1;
@@ -151,24 +128,52 @@ public class Server extends PApplet {
 						
 						// Get Selected bot.
 						int botid = curLine % targetLocations.size();
+						int nxtbot = (curLine+1) % targetLocations.size();
 						
-						// Generate speech duration
-						int remDurationOfSpeech =  remainingDurationOfTTS(voices[botid], 250, lines[curLine]);
+						// at each turn to speak.
+						// want to open the tray
+							// wait a bit.
+								// close tray at end of speech.
 						
+						// tell bot to open tray if not already open
+						// tell bots with open trays to close them, that aren't this bot.
 						
-						// SET A COUNTDOWN TO CHANGE AT RANDOM 
-						
-						// 1 second after speech, select bot behind this one
-						int randBotId = Math.min( (int) random(targetLocations.size()), targetLocations.size()-1); //(curLine) % targetLocations.size(); //<- actually current bot
-						
-						if (remDurationOfSpeech-1000 > 1000) {
-							trayChangeCounter = new CountdownToTrayCommand((int)(random(500,Math.min(1500,remDurationOfSpeech-1000))) , !traysOpen.get(randBotId), targetLocations.get(randBotId));
-							traysOpen.set(randBotId, !traysOpen.get(randBotId));
+						for (int h=0; h<traysOpen.size(); h++) {
+							if (h == botid) {
+								if (!traysOpen.get(h)) {
+									traysOpen.set(h, true);
+									commandTray("open", targetLocations.get(botid));
+								}
+							} else {
+								if (traysOpen.get(h)==true) {
+									if (h != nxtbot ) {
+										traysOpen.set(h, false);
+										commandTray("close", targetLocations.get(botid));
+									}
+								}
+							}
 						}
 						
 						
+						// should actually wait a bit.
+						
 						// Say speech
+						String[] voices = { TTS.VICKI, TTS.BRUCE, TTS.TRINOIDS, TTS.ZARVOX, TTS.BOING, TTS.HYSTERICAL };
+						
 						sendSpeech(lines[curLine], voices[botid], targetLocations.get(botid));
+						
+						// COMMAND TRAY CONTROL
+						/*
+						for (int h = 0; h < bots.size(); h++) {
+							if (h == botid) {
+								commandTray("open", bots.get(botid));
+								println("opening tray of bot " + h);
+							} else {
+								commandTray("close", bots.get(botid));
+								println("closing tray of bot " + h);
+							}
+						}
+						 */
 						
 						
 						
@@ -179,10 +184,14 @@ public class Server extends PApplet {
 						/* additional notes:
 						 * - should compensate for visualisation lag
 						 * - should delay a minimum of the time required to turn computers, also make ensure small serial size
+						 * - need to time tray commands
 						 * - need to give printer something to actually say
 						 */
 						
-						currentSpeechTimer = new Countdown( remDurationOfSpeech );
+						int curSpeechTimerBuffer = 5000;
+						
+						// wait
+						currentSpeechTimer = new Countdown( remainingDurationOfTTS(voices[botid], 250, lines[curLine]) + curSpeechTimerBuffer);
 					} else {
 						dialogueDone = true;
 						
@@ -191,18 +200,6 @@ public class Server extends PApplet {
 						}
 					}
 				}
-				
-				
-				// RUN RANDOM TRAY CHANGE
-				if (trayToRandomlyChangeTimer.hasStopped()) {
-					boolean trayState = traysOpen.get(trayToRandomlyChange);
-					
-					
-					
-					boolean newTrayState = !trayState;
-					traysOpen.set(trayToRandomlyChange, newTrayState);
-				}
-				
 			}
 		}
 		
@@ -433,48 +430,6 @@ public class Server extends PApplet {
 			e.printStackTrace();
 		}
 	}
-	
-	public class CountdownToTrayCommand {
-		long startTime;
-		long stopTime;
-		
-		boolean trayChanged = false;
-		
-		boolean trayOpenCommand;
-		NetAddress target;
-
-		CountdownToTrayCommand(long stopTime, boolean trayOpenCommand, NetAddress target) {
-			startTime = System.currentTimeMillis();
-			this.stopTime = stopTime;
-			this.trayOpenCommand = trayOpenCommand;
-			this.target = target; 
-		}
-		
-		void run() {
-			if (!trayChanged) {
-				if (this.hasStopped()) {
-					
-					if (trayOpenCommand) {
-						commandTray("open", target);
-					} else {
-						commandTray("close", target);
-					}
-					
-					trayChanged = true;
-				}
-			}
-		}
-
-		boolean hasStopped() {
-			// System.out.println((int)(System.currentTimeMillis() / 1000L) );
-			long curTime = System.currentTimeMillis();
-			if (curTime - startTime >= stopTime) {
-				return true;
-			}
-			return false;
-		}
-
-	}
 
 	public class Countdown {
 		// get current time in milliseconds as difference from last
@@ -485,15 +440,6 @@ public class Server extends PApplet {
 		Countdown(long stopTime) {
 			startTime = System.currentTimeMillis();
 			this.stopTime = stopTime;
-		}
-		
-		long timeRemaining() {
-			return stopTime - this.timeElapsed();
-		}
-		
-		long timeElapsed() {
-			long curTime = System.currentTimeMillis();
-			return curTime - startTime;
 		}
 
 		boolean hasStopped() {

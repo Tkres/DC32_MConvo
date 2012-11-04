@@ -10,7 +10,7 @@ import oscP5.OscP5;
 import processing.core.PApplet;
 import processing.serial.Serial;
 
-public class Server extends PApplet {
+public class Server_v3 extends PApplet {
 	
 	boolean turntableControlOn = false;
 	boolean printerControlOn = true;
