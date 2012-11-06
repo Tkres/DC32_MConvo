@@ -12,11 +12,19 @@ import processing.serial.Serial;
 
 public class Server extends PApplet {
 	
-	boolean turntableControlOn = false;
-	boolean printerControlOn = true;
+	boolean initialTurntableControlOn = false;
+	boolean printerControlOn = false;
+	boolean trayControlOn = false;
+	
+	boolean randomDialogueSequence = false;
+	
+	int printerPort = 6;
+	int turntablePort = 4;
 	
 	// -----------------------------------------------------------------------------
 
+	boolean turntableControlOn = initialTurntableControlOn;
+	
 	int swidth, sheight;
 
 	OscP5 oscP5;
@@ -55,7 +63,7 @@ public class Server extends PApplet {
 		// Setup PRINTER
 		if (printerControlOn) {
 			try {
-				printer = new PrinterController(this, 4);
+				printer = new PrinterController(this, printerPort);
 			} catch (Exception e) {
 				System.err.println("Problem initializing printer: " + e);
 				printerControlOn = false;
@@ -65,7 +73,7 @@ public class Server extends PApplet {
 		// Setup TURNTABLES
 		if (turntableControlOn) {
 			try {
-				turntable = new TurntableController(this, 5);
+				turntable = new TurntableController(this, turntablePort);
 			} catch (Exception e) {
 				System.err.println("Problem initializing turntable: " + e);
 				turntableControlOn = false;
@@ -83,6 +91,11 @@ public class Server extends PApplet {
 
 	public void draw() {
 		if (targetLocations.size()>=2) d1.run();
+		
+		
+		if (printerControlOn)
+			printer.sendMessage("");
+		
 	}
 	
 	public class Dialogue1 {
@@ -139,7 +152,8 @@ public class Server extends PApplet {
 						if (currentSpeechTimer.timeRemaining()>500) {
 							// create a new timer, between 500 and timeremaining-500
 							int randBotId = Math.min( (int) random(targetLocations.size()), targetLocations.size()-1);
-							trayChangeCounter = new CountdownToTrayCommand((int)(random(100,currentSpeechTimer.timeRemaining()-500)), !traysOpen.get(randBotId), targetLocations.get(randBotId));
+							int randomMaxTime = (int) min(2500, currentSpeechTimer.timeRemaining()-500);
+							trayChangeCounter = new CountdownToTrayCommand((int)(random(100,randomMaxTime)), !traysOpen.get(randBotId), targetLocations.get(randBotId));
 							traysOpen.set(randBotId, !traysOpen.get(randBotId));
 						}
 					}
@@ -150,27 +164,35 @@ public class Server extends PApplet {
 					if (curLine < lines.length) {
 						
 						// Get Selected bot.
+						
 						int botid = curLine % targetLocations.size();
+						if (randomDialogueSequence) {
+							int randBotId = Math.min( (int) random(targetLocations.size()), targetLocations.size()-1);
+							if (randBotId==botid) randBotId = (max( (curLine-1) % targetLocations.size(), 0));
+							botid = randBotId;
+							
+						}
+						
+						int timeBuffer_visualisation = 1000; // a buffer of time, compensating for lag caused by visuals or general processes
+						int timeBuffer_rotation = 200; // a  buffer of time, compensating for duration delay in rotating motors (though without this they do seem more random which can be good)
+						
 						
 						// Generate speech duration
 						int remDurationOfSpeech =  remainingDurationOfTTS(voices[botid], 250, lines[curLine]);
 						
+						remDurationOfSpeech += timeBuffer_visualisation + timeBuffer_rotation;
 						
-						// SET A COUNTDOWN TO CHANGE AT RANDOM 
-						
+						// Set a random tray change.
 						// 1 second after speech, select bot behind this one
 						int randBotId = Math.min( (int) random(targetLocations.size()), targetLocations.size()-1); //(curLine) % targetLocations.size(); //<- actually current bot
 						
 						if (remDurationOfSpeech-1000 > 1000) {
-							trayChangeCounter = new CountdownToTrayCommand((int)(random(500,Math.min(1500,remDurationOfSpeech-1000))) , !traysOpen.get(randBotId), targetLocations.get(randBotId));
+							trayChangeCounter = new CountdownToTrayCommand((int)(random(1000,Math.min(2000,remDurationOfSpeech-1000))) , !traysOpen.get(randBotId), targetLocations.get(randBotId));
 							traysOpen.set(randBotId, !traysOpen.get(randBotId));
 						}
 						
-						
 						// Say speech
 						sendSpeech(lines[curLine], voices[botid], targetLocations.get(botid));
-						
-						
 						
 						// TURN TABLE CONTROL
 						int turntableMsg = (botid % 4) + 1;
@@ -223,6 +245,24 @@ public class Server extends PApplet {
 
 
 	public void keyPressed() {
+		
+		if (key == 'd') {
+			d1.dialogueDone = !d1.dialogueDone;
+			TTS.say("Running Dialogue is now "+!d1.dialogueDone);
+		}
+		
+		if (key == 't') {
+			if (initialTurntableControlOn) {
+				turntableControlOn = !turntableControlOn;
+				TTS.say("Turn-table control is now "+turntableControlOn);
+			}
+			
+		}
+		
+		if (key == 'c') {
+			trayControlOn = !trayControlOn;
+			TTS.say("Tray control is now "+trayControlOn);
+		}
 		
 		// ID Test (say what id you are).
 		if (key == 'i') {
@@ -454,10 +494,14 @@ public class Server extends PApplet {
 			if (!trayChanged) {
 				if (this.hasStopped()) {
 					
+					if (trayControlOn) {
+					
 					if (trayOpenCommand) {
 						commandTray("open", target);
 					} else {
 						commandTray("close", target);
+					}
+					
 					}
 					
 					trayChanged = true;

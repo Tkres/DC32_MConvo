@@ -22,7 +22,7 @@ import processing.serial.Serial;
  * @author zlot
  *
  */
-public class Client_OpenCV extends PApplet {
+public class Client_OpenCV_v001 extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String args[]) {
@@ -47,7 +47,6 @@ public class Client_OpenCV extends PApplet {
 	String home_ip;
 	// OpenCV
 	OpenCV opencv;
-	OpenCV opencv2;
 	Rectangle[] faces;
 	PImage img; // image captured from webcam
 	int opencv_contrast = 120;
@@ -55,8 +54,7 @@ public class Client_OpenCV extends PApplet {
 	boolean humanIsPresent = false;
 	int agitation = 0; // agitation variable!
 	
-	int realServoPosX = 70; // 70 because its x center for servo.
-	int realServoPosY = 60; // 60 because its y center for servo.
+	int realServoPosX = 70; // 70 because its center.
 	
 	// serial to arduino
 	Serial serialPort;
@@ -84,8 +82,7 @@ public class Client_OpenCV extends PApplet {
 		opencv.capture(cwidth, cheight, 6); // open video stream. index=6 is the A4tech webcam
 	    opencv.cascade( OpenCV.CASCADE_FRONTALFACE_ALT );  // load detection description, here-> front face detection : "haarcascade_frontalface_alt.xml"
 	    // init serialPort to arduino
-	    println(Serial.list());
-	    serialPort = new Serial(this, Serial.list()[6], 9600);
+	    serialPort = new Serial(this, Serial.list()[5], 9600); // marks computer uses [6]	
 	 // get this object to read the serial port and maybe flush it also instead of the arduino?
 	    // said ollie.
 	}
@@ -100,87 +97,65 @@ public class Client_OpenCV extends PApplet {
 	// SERVOS.
 	
 	int counter = 0;
-	public void moveSentinels() {
+	public void moveServos() {
 		/* uses Arduino sketch "Pan_Tilt_Servos"
 		 * servo1 is x-axis, connected to digital out pin 9 (analogue)
 		 * servo2 is y-axis, connected to digital out pin 10 (analogue)
 		 */
+		int captureXCenter = cwidth/2;
+		int captureYCenter = cheight/2;
 		if(faces.length != 0) {
 			int sPosXUnmapped = faces[0].x+faces[0].width/2;
 			int sPosYUnmapped = faces[0].y+faces[0].height/2;
+			
+			
+			//trying to get the webcam on top of the pan/tilt motor to move so to make face the center
 			
 			// 70 is center!
 			// 0 is on right, 180 is on left. 
 			
 			counter++;
 			if(counter >= 2) {
-				if(map(sPosXUnmapped,0,cwidth,0,180) < 70) realServoPosX+=2; // 70 is horiz centre.
-				if(map(sPosXUnmapped,0,cwidth,0,180) > 70) realServoPosX-=2; // 70 is horiz centre.
-				
-				if(map(sPosYUnmapped,0,cheight,0,180) < 90) realServoPosY+=1; // 60 is vertical centre.
-				if(map(sPosYUnmapped,0,cheight,0,180) > 90) realServoPosY-=1; // 60 is vertical centre.
-				
+				if(map(sPosXUnmapped,0,cwidth,0,180) < 70) {
+					realServoPosX+=2;
+				}
+				if(map(sPosXUnmapped,0,cwidth,0,180) > 70) {
+					realServoPosX-=2;
+				}
 				//println("realServoPosX sent. New realServoPosX is: " + realServoPosX);
 				counter = 0;
 			}
 			realServoPosX = constrain(realServoPosX, 10, 160); //10, 160 arbitrary
-			realServoPosY = constrain(realServoPosY, 50, 110); //50, 110 arbitrary, but roughly a good angle.
 			
-			/* SENTIENT 1 */
+			
+			int sPosY = round(map(sPosYUnmapped, 0, cheight, 0, 50));
+			//int sPosY2 = round(map(sPosYUnmapped, 0, cheight, 0, 50)); // sPosY2 is diff just cause of the way I created the pan/tilt.
+			
 			if(frameCount % 4 == 0) {
+				println("realServoPosX: " + realServoPosX);
+				
+//				serialPort.write(new byte[]{'s'});
+//				serialPort.write(realServoPosX);
 				serialPort.write("s" + realServoPosX); // s being sentient1 x-axis
-				if(frameCount % 8 == 0) {
-					serialPort.write("w" + realServoPosY); // w being sentient1 y-axis
-				}
-			}
-			/* SENTIENT 2 */
-			if(frameCount % 4 == 0) {
-				serialPort.write("k" + realServoPosX); // k being sentient2 x-axis
-				if(frameCount % 8 == 0) {
-					serialPort.write("l" + realServoPosY); // l being sentient2 y-axis
-				}
-			}
-			
-		}
-	}
-	
-	float xoff = 0;
-	double xincrement = 0.01; 	
-	
-	public void sentinelScan() {
-		// With each cycle, increment xoff
-		xoff += xincrement;
-		// Get a noise value based on xoff 
-		float n = noise(xoff);
-		float n2 = noise(xoff*2); // ahead of the other noise value.
-		// scale it to scale of min/max values for servos
-		int nForServoX, nForServoY;
-		/* SENTIENT 1 */
-		if(frameCount % 4 == 0) {
-			nForServoX = round(map(n,0,1,10,160));
-			serialPort.write("s" + nForServoX); // s being sentient1 x-axis
-			if(frameCount % 8 == 0) {
-				nForServoY = round(map(n2,0,1,50,110));
-				serialPort.write("w" + nForServoY); // w being sentient1 y-axis
-				//println("nForServoX: " + nForServoX + "nForServoY: " + nForServoY);
+				
+				
+			//	serialPort.write(sPosY + "w"); // w being sentient1 y-axis
+				//serialPort.write(140 + "w"); //testing only!
+				
+			} else {
+//				serialPort.write(sPosX + "k");
+//				serialPort.write(sPosY2 + "l");
 			}
 		}
-		/* SENTIENT 2 */
-		if(frameCount % 4 == 0) {
-			nForServoX = round(map(n,0,1,10,160));
-			serialPort.write("k" + nForServoX); // k being sentient2 x-axis
-			if(frameCount % 8 == 0) {
-				nForServoY = round(map(n2,0,1,50,110));
-				serialPort.write("l" + nForServoY); // l being sentient2 y-axis
-			}
-		}	
+		
+		delay(100);
+		
+		
 	}
+	
 	
 	// -----------------------------------------------------------------------------
 	// OPENCV.
-	
-	int restTime = 0; // rest time for sentinels when scanning.
-	
 	public void drawOpenCV() {
 		opencv.read();
 		opencv.flip(OpenCV.FLIP_HORIZONTAL);
@@ -203,20 +178,9 @@ public class Client_OpenCV extends PApplet {
 		}
 		if(humanIsPresent) {
 			drawTiledImages(faces);
-			moveSentinels();
+			moveServos();
 		} else {
 			image(img,0,0, swidth, sheight);
-			
-			// if no humans found, look around, but sometimes have a rest!
-			if(restTime <= 0) {
-				if(random(1) > 0.005) {
-					sentinelScan(); // look around.
-				} else { // 0.5% of the time
-					println("TIME TO REST!!");
-					restTime = FRAME_RATE*6; // 10 seconds
-				}
-			}
-			if(restTime > 0) {restTime--; println("REST TIME REMAINING: " + restTime);}
 		}
 		
 		checkAgitation(faces);
@@ -412,9 +376,7 @@ public class Client_OpenCV extends PApplet {
 		//String addrPattern = theOscMessage.addrPattern();
 	}
 	
-	/**
-	 * Stop OpenCV process.
-	 */
+
 	public void stop() {
 	    opencv.stop();
 	    super.stop();
